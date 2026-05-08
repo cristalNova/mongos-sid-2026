@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #f4f7ff;
+    min-height: 100vh;
+    color: #2e2e2e;
+}
+
+/* =======================
+   WRAPPER
+======================= */
+.page-wrapper {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* =======================
+   TOPBAR (más integrado)
+======================= */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: white;
+    padding: 16px 24px;
+    border-radius: 16px;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    margin-bottom: 25px;
+}
+
+/* =======================
+   HEADER ACTIONS
+======================= */
+.actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.btn {
+    background: #9eb16f;
+    padding: 10px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* =======================
+   LIST CONTAINER (tipo cards)
+======================= */
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ROW MEJORADA */
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: white;
+    padding: 14px 18px;
+    border-radius: 14px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
+
+.row:hover {
+    transform: translateY(-2px);
+}
+
+/* INFO */
+.info strong {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* =======================
+   ACTIONS
+======================= */
+.actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-small {
+    background: #f3c1d9;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    text-decoration: none;
+    color: #2e2e2e;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-small:hover {
+    transform: scale(1.05);
+}
+
+/* DELETE BUTTON */
+button {
+    border: none;
+    cursor: pointer;
+}
+
+.danger {
+    background: #ff6b6b;
+    color: white;
+    padding: 7px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.danger:hover {
+    transform: scale(1.05);
+}
+
+/* =======================
+   CREATE CARD (si lo usas luego)
+======================= */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    width: 50%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+input {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: #f4f7ff;
+    outline: none;
+}
+
+input:focus {
+    border-color: #9eb16f;
+}

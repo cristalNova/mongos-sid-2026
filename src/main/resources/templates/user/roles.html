@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Roles</title>
+    <link rel="stylesheet" th:href="@{/css/user-detail.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+
+<body>
+
+<div class="page-wrapper">
+
+    <header class="topbar">
+        <h1>Manage Roles</h1>
+
+        <a th:href="@{/user/list}" class="btn-small">Back</a>
+    </header>
+
+    <main>
+
+        <section class="card">
+
+            <h2 th:text="${user.firstName + ' ' + user.lastName}"></h2>
+
+            <!-- CURRENT ROLES -->
+            <div>
+                <h3>Current roles</h3>
+
+                <div th:each="role : ${user.roles}">
+                    <span th:text="${role.name}"></span>
+
+                    <form th:action="@{'/user/' + ${user.id} + '/roles/remove'}"
+                          method="post">
+
+                        <input type="hidden" name="roleId" th:value="${role.id}">
+                        <button class="danger">Remove</button>
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- ADD ROLE -->
+            <form th:action="@{'/user/' + ${user.id} + '/roles/add'}"
+                  method="post">
+
+                <select name="roleId">
+                    <option th:each="role : ${roles}"
+                            th:value="${role.id}"
+                            th:text="${role.name}">
+                    </option>
+                </select>
+
+                <button>Add role</button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

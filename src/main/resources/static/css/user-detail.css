@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+
+/* =========================
+   BASE
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #BACDED;
+    min-height: 100vh;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.page-wrapper {
+    padding: 20px;
+}
+
+/* =========================
+   TOPBAR SIMPLE
+========================= */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: white;
+    padding: 16px 20px;
+    border-radius: 14px;
+
+    margin-bottom: 20px;
+}
+
+.topbar h1 {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+/* BACK BUTTON */
+.btn-small {
+    background: #F3C1D9;
+    padding: 6px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: black;
+    font-size: 12px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-small:hover {
+    transform: scale(1.05);
+}
+
+/* =========================
+   CARD CENTRAL
+========================= */
+.card {
+    background: white;
+    max-width: 500px;
+    margin: auto;
+
+    padding: 24px;
+    border-radius: 16px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* TITLE USER */
+.card h2 {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+/* SECTION HEADERS */
+.card h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+/* =========================
+   ROLES LIST
+========================= */
+.card > div > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: #FAF4E4;
+    padding: 10px 12px;
+    border-radius: 10px;
+
+    margin-bottom: 8px;
+}
+
+/* ROLE NAME */
+.card span {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* =========================
+   FORM ELEMENTS
+========================= */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+select,
+input {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+button {
+    border: none;
+    cursor: pointer;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    transition: 0.2s;
+}
+
+/* primary */
+button {
+    background: #9EB16F;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* danger */
+.danger {
+    background: #ff6b6b;
+    color: white;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 10px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 600px) {
+    .card {
+        width: 100%;
+    }
+
+    .card > div > div {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+}

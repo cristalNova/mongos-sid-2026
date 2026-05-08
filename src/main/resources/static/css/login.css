@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #BACDED;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Franjas laterales */
+body::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: clamp(80px, 15vw, 180px);
+    height: 100%;
+    z-index: 2;
+    background: repeating-linear-gradient(
+            90deg,
+            #FCBAE4, #F3C1D9 10px,
+            #F8E6EF 10px, #F8E6EF 20px
+    );
+}
+
+body::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: clamp(80px, 15vw, 180px);
+    height: 100%;
+    z-index: 2;
+    background: repeating-linear-gradient(
+            90deg,
+            #F6DB70, #F5D76E 10px,
+            #FFF3C4 10px, #FFF3C4 20px
+    );
+}
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 50%;
+    z-index: 3;
+}
+
+#sign-up-form{
+    transform: translateY(-60px);
+}
+
+form .title {
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+label {
+    font-size: 15px;
+    font-weight: 400;
+    color: #2e2e2e;
+    width: 40%;
+    text-align: left;
+}
+
+input {
+    width: 40%;
+    padding: 14px 18px;
+    border-radius: 30px;
+    border: none;
+    outline: none;
+    background: #FAF4E4;
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    transition: box-shadow 0.3s;
+}
+
+input:focus {
+    box-shadow: 0 0 0 2px #9EB16F;
+}
+
+button {
+    margin-top: 8px;
+    padding: 12px 30px;
+    border-radius: 25px;
+    border: none;
+    background: #9EB16F;
+    color: black;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+button:hover {
+    background: #AF93D6;
+    transform: scale(1.05);
+}
+
+/* Decoraciones */
+.decor {
+    position: absolute;
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.decor.left {
+    left: clamp(50px, 12vw, 150px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    top: 50%;
+    transform: translateX(-30%) translateY(calc(-50% + 20px));
+}
+
+.decor.right {
+    right: clamp(50px, 12vw, 150px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    top: 50%;
+    transform: translateX(30%) translateY(calc(-50% + 20px));
+}
+
+.decor.bottom {
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+}
+
+/* Hover del botón activa left y right */
+body:has(button:hover) .decor.left {
+    opacity: 1;
+    transform: translateX(-30%) translateY(calc(-50% - 10px));
+}
+
+body:has(button:hover) .decor.right {
+    opacity: 1;
+    transform: translateX(30%) translateY(calc(-50% - 10px));
+}
+
+/* Bottom con :has() para que responda al hover del botón */
+body:has(button:hover) .decor.bottom {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.pair-input{
+    width: 100%;
+    display:flex;
+    flex-direction:row;
+    gap: 35px;
+}
+
+.pair-input > div{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 8px;
+}
+.pair-input > div > label{
+    width: 100%;
+}
+
+.pair-input > div > input{
+    width: 100%;
+}
+
+/* Responsivo: ocultar decors laterales en pantallas pequeñas */
+@media (max-width: 500px) {
+    .decor.left,
+    .decor.right {
+        display: none;
+    }
+}

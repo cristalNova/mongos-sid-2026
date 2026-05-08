@@ -1,0 +1,34 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+
+<body>
+
+<header class="topbar" th:fragment="topbar(userName)">
+
+    <nav class="nav-tabs">
+        <a th:href="@{/user}" class="tab dashboard">Dashboard</a>
+
+        <a sec:authorize="hasAuthority('VIEW_USERS')"
+           th:href="@{/user/list}" class="tab users">Users</a>
+
+        <a sec:authorize="hasAuthority('MANAGE_ROLES')"
+           th:href="@{/role/view}" class="tab exercises">Roles</a>
+
+        <a sec:authorize="hasAuthority('MANAGE_PERMISSIONS')"
+           th:href="@{/permission/view}" class="tab permisos">Permissions</a>
+    </nav>
+
+    <div class="user-box">
+        <span th:text="${userName}">Nombre</span>
+
+        <div class="avatar">
+            <img th:src="@{/img/Group-45.svg}" alt="user avatar" class="avatar-img">
+        </div>
+    </div>
+
+</header>
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+
+    /* pastel más suave */
+    background: linear-gradient(135deg, #BACDED, #E7E6FF);
+
+    overflow-x: hidden;
+    color: #1f1f1f;
+}
+
+/* ===================== DECOR BACKGROUND (NO INTERFIERE) ===================== */
+.decor {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: 240px;
+
+    z-index: 0;
+    opacity: 0.18; /* más suave */
+
+    pointer-events: none;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+
+    filter: blur(0.2px);
+}
+
+.decor.left { left: 0; }
+.decor.right { right: 0; }
+
+.decor .stack {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100%;
+    gap: 70px;
+    padding: 40px 0;
+}
+
+.decor svg {
+    width: 170px;
+    max-width: 100%;
+}
+
+/* ===================== MAIN WRAPPER ===================== */
+.page-wrapper {
+    position: relative;
+    z-index: 2;
+
+    width: min(1100px, calc(100% - 280px));
+
+    margin: 50px auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ===================== TOPBAR ===================== */
+.topbar {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+
+    border-radius: 28px;
+
+    padding: 22px 26px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+.hero-card {
+    background: linear-gradient(135deg, #FAF4E4, #F8E6EF);
+
+    border-radius: 28px;
+
+    padding: 32px;
+
+    box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+
+    margin-bottom: 2%;
+}
+
+.hero-card h2 {
+    font-size: 32px;
+    font-weight: 800;
+}
+
+.hero-card p {
+    margin-top: 8px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* ===================== GRID ===================== */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+}
+
+/* ===================== CARDS ===================== */
+.dashboard-card {
+    position: relative;
+
+    background: #FAF4E4;
+    border-radius: 24px;
+
+    padding: 24px;
+    min-height: 180px;
+
+    text-decoration: none;
+    color: inherit;
+
+    box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+
+    transition: all 0.25s ease;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    overflow: hidden;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-6px);
+    background: #ffffff;
+    box-shadow: 0 16px 30px rgba(0,0,0,0.12);
+}
+
+/* ===================== LOGOUT BUTTON (MEJORADO) ===================== */
+.logout-form {
+    margin: 0;
+}
+
+.logout-btn {
+    padding: 12px 26px;
+    border-radius: 999px;
+
+    border: none;
+    cursor: pointer;
+
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+
+    color: #3a3a3a;
+
+    /* pastel simple */
+    background: #F8E6EF;
+
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: #E7E6FF;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 18px rgba(0,0,0,0.12);
+}
+
+.logout-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}

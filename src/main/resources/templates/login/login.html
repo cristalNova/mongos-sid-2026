@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <title>Log In</title>
+</head>
+<body>
+<form th:action="@{/login}" method="post">
+
+    <p class="title">Log in</p>
+
+    <label for="email">Email</label>
+
+    <input type="text" name="email" placeholder="Email" id="email">
+
+    <label for="psswd">Password</label>
+
+    <input type="password" name="password" placeholder="Password" id="psswd">
+
+    <button type="submit">Log in</button>
+
+</form>
+
+<div class="decor left">
+
+    <svg width="290" height="290" viewBox="0 0 290 290" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="144.56" cy="144.56" r="103.5" transform="rotate(35.9777 144.56 144.56)" fill="#AF93D6"/>
+        <path d="M133.96 86.8184C128.534 104.505 143.101 115.079 157.832 104.149" stroke="black" stroke-width="6" stroke-linecap="round"/>
+        <path d="M177.659 118.542C172.234 136.229 186.8 146.803 201.532 135.872" stroke="black" stroke-width="6" stroke-linecap="round"/>
+        <path d="M106.313 84.0479C111.465 132.273 162.043 168.99 213.134 161.594" stroke="black" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+
+    <svg width="275" height="274" viewBox="0 0 275 274" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="126.903" cy="73.1719" r="51.75" transform="rotate(43.8923 126.903 73.1719)" fill="#AF93D6"/>
+        <circle cx="201.49" cy="144.929" r="51.75" transform="rotate(43.8923 201.49 144.929)" fill="#AF93D6"/>
+        <circle cx="73.1722" cy="129.021" r="51.75" transform="rotate(43.8923 73.1722 129.021)" fill="#AF93D6"/>
+        <circle cx="147.759" cy="200.779" r="51.75" transform="rotate(43.8923 147.759 200.779)" fill="#AF93D6"/>
+        <rect x="162.241" y="35.3584" width="104.5" height="103.5" transform="rotate(43.8923 162.241 35.3584)" fill="#AF93D6"/>
+        <rect x="107.79" y="90.5156" width="103" height="103.5" transform="rotate(43.8923 107.79 90.5156)" fill="#AF93D6"/>
+        <path d="M136.863 76.1621C129.054 92.9332 142.025 105.413 158.122 96.6146" stroke="black" stroke-width="6" stroke-linecap="round"/>
+        <path d="M175.777 113.601C167.968 130.372 180.94 142.851 197.036 134.053" stroke="black" stroke-width="6" stroke-linecap="round"/>
+        <path d="M109.861 69.6113C108.323 118.087 153.363 161.418 204.986 161.128" stroke="black" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+
+</div>
+
+<div class="decor right">
+    <svg width="289" height="289" viewBox="0 0 289 289" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="96.1173" cy="134.704" rx="69.2219" ry="69.222" transform="rotate(-34.0658 96.1173 134.704)" fill="#AF93D6"/>
+        <ellipse cx="135.079" cy="192.324" rx="69.2219" ry="69.222" transform="rotate(-34.0658 135.079 192.324)" fill="#AF93D6"/>
+        <ellipse cx="192.145" cy="153.737" rx="69.2219" ry="69.222" transform="rotate(-34.0658 192.145 153.737)" fill="#AF93D6"/>
+        <ellipse cx="153.183" cy="96.1174" rx="69.2219" ry="69.222" transform="rotate(-34.0658 153.183 96.1174)" fill="#AF93D6"/>
+        <path d="M89.4565 138.94C104.229 150.076 119.141 139.994 113.894 122.416" stroke="black" stroke-width="6" stroke-linecap="round"/>
+        <path d="M134.19 108.692C148.963 119.828 163.874 109.745 158.627 92.1678" stroke="black" stroke-width="6" stroke-linecap="round"/>
+        <path d="M69.6462 163.2C116.734 174.817 178.864 132.807 189.349 82.259" stroke="black" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+
+    <svg width="277" height="277" viewBox="0 0 277 277" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="62.4512" cy="111.348" r="46.8301" transform="rotate(-25.5575 62.4512 111.348)" fill="#AF93D6"/>
+        <circle cx="160.262" cy="64.5736" r="46.8301" transform="rotate(-25.5575 160.262 64.5736)" fill="#AF93D6"/>
+        <circle cx="92.3486" cy="162.463" r="46.8301" transform="rotate(-25.5575 92.3486 162.463)" fill="#AF93D6"/>
+        <circle cx="116.218" cy="212.377" r="46.8301" transform="rotate(-25.5575 116.218 212.377)" fill="#AF93D6"/>
+        <circle cx="185.721" cy="117.812" r="46.8301" transform="rotate(-25.5575 185.721 117.812)" fill="#AF93D6"/>
+        <circle cx="214.029" cy="165.603" r="46.8301" transform="rotate(-25.5575 214.029 165.603)" fill="#AF93D6"/>
+        <rect x="46.0098" y="67.3014" width="104.5" height="84.7559" transform="rotate(-25.5575 46.0098 67.3014)" fill="#AF93D6"/>
+        <rect x="72.4874" y="124.987" width="103" height="84.7559" transform="rotate(-25.5575 72.4874 124.987)" fill="#AF93D6"/>
+        <rect x="98.2772" y="178.918" width="103" height="84.7559" transform="rotate(-25.5575 98.2772 178.918)" fill="#AF93D6"/>
+        <path d="M76.6021 108.094C89.5648 121.294 105.804 113.528 103.216 95.3676" stroke="black" stroke-width="6" stroke-linecap="round"/>
+        <path d="M125.318 84.7985C138.281 97.9977 154.52 90.2322 151.932 72.0717" stroke="black" stroke-width="6" stroke-linecap="round"/>
+        <path d="M60.9904 131.079C105.841 149.535 162.226 122.572 180.074 74.1317" stroke="black" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+</div>
+
+<div class="decor bottom">
+    <svg width="191" height="207" viewBox="0 0 191 207" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="31.7485" cy="31.7485" r="31.7485" fill="#AF93D6"/>
+        <circle cx="95.2454" cy="31.7485" r="31.7485" fill="#AF93D6"/>
+        <circle cx="158.742" cy="31.7485" r="31.7485" fill="#AF93D6"/>
+        <path d="M0 31.748H190.491V127C190.491 171.182 154.674 207 110.491 207H80C35.8173 207 0 171.182 0 127V31.748Z" fill="#AF93D6"/>
+        <path d="M53 66C59 83.5 77 83.5 82.5 66" stroke="black" stroke-width="6" stroke-linecap="round"/>
+        <path d="M107 66C113 83.5 131 83.5 136.5 66" stroke="black" stroke-width="6" stroke-linecap="round"/>
+        <path d="M29 80C61.5 116 124 116 161 80" stroke="black" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+
+/* =========================
+   BASE
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #BACDED;
+    min-height: 100vh;
+    color: #2e2e2e;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.page-wrapper {
+    padding: 20px;
+}
+
+/* =========================
+   TOPBAR
+========================= */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: white;
+    padding: 16px 20px;
+    border-radius: 14px;
+
+    margin-bottom: 20px;
+}
+
+.topbar h1 {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.topbar-actions span {
+    font-size: 14px;
+}
+
+/* =========================
+   BUTTONS GLOBAL
+========================= */
+button {
+    border: none;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    transition: 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* primary */
+.btn {
+    background: #9EB16F;
+    color: black;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* small action button */
+.btn-small {
+    background: #F3C1D9;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    text-decoration: none;
+    color: black;
+    font-weight: 600;
+}
+
+/* danger */
+.danger {
+    background: #ff6b6b;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 12px;
+}
+
+/* =========================
+   USER LIST (ROWS STYLE)
+========================= */
+.user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* cada usuario en fila limpia */
+.user-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 2fr;
+    gap: 12px;
+
+    background: #FAF4E4;
+    padding: 14px 16px;
+    border-radius: 12px;
+
+    align-items: center;
+}
+
+/* =========================
+   USER INFO
+========================= */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.user-info strong {
+    font-size: 15px;
+}
+
+.user-info small {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* =========================
+   ROLES DISPLAY
+========================= */
+.roles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chip {
+    background: #F5D76E;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* =========================
+   ACTIONS
+========================= */
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* =========================
+   CARDS (ROLES / TRAINER PAGES)
+========================= */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    max-width: 600px;
+    margin: auto;
+}
+
+/* =========================
+   FORMS
+========================= */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input, select {
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    outline: none;
+}
+
+/* inline forms inside lists */
+.inline-form {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+
+    .user-row {
+        grid-template-columns: 1fr;
+    }
+
+    .actions {
+        justify-content: flex-start;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

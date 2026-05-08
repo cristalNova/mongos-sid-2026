@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Roles</title>
+
+    <link rel="stylesheet" th:href="@{/css/role-list.css}">
+    <link rel="stylesheet" th:href="@{/css/topbar.css}">
+</head>
+
+<body>
+
+<div th:replace="fragments/topbar :: topbar(${userName})"></div>
+
+
+    <!-- CONTENT -->
+    <main class="content">
+
+        <section class="title-area">
+            <h1>Roles</h1>
+            <p>Manage system roles and permissions</p>
+        </section>
+
+        <!-- CREATE ROLE -->
+        <section class="create-card" sec:authorize="hasAuthority('ROLE_CREATE')">
+            <form th:action="@{/role/create}" method="post" th:object="${roleForm}">
+                <input type="text" th:field="*{name}" placeholder="New role name" required>
+                <button type="submit">Create</button>
+            </form>
+        </section>
+
+        <!-- ROLES LIST -->
+        <section class="roles-list">
+
+            <div class="role-row" th:each="role : ${roles}">
+
+                <!-- NAME -->
+                <div class="role-name">
+                    <strong th:text="${role.name}">ADMIN</strong>
+                    <small>ID <span th:text="${role.id}"></span></small>
+                </div>
+
+                <!-- PERMISSIONS + ADD -->
+                <div class="role-perms">
+                    <div th:each="p : ${role.permissions}" class="chip">
+                        <span th:text="${p.name}">PERMISSION</span>
+
+                        <form sec:authorize="hasAuthority('MANAGE_ROLES')"
+                              th:action="@{/role/remove-permission}"
+                              method="post"
+                              class="inline-form">
+                            <input type="hidden" name="roleId" th:value="${role.id}">
+                            <input type="hidden" name="permissionId" th:value="${p.id}">
+                            <button type="submit" class="chip-remove">x</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ADD PERMISSION -->
+                <div class="role-actions">
+
+                    <form th:action="@{/role/update/{id}(id=${role.id})}" method="post">
+                        <input type="text" name="name" th:value="${role.name}">
+                        <button type="submit">Edit</button>
+                    </form>
+
+                    <form th:action="@{'/role/delete/' + ${role.id}}" method="post"
+                          sec:authorize="hasAuthority('ROLE_DELETE')">
+
+                        <button type="button"
+                                class="danger"
+                                th:attr="data-role-id=${role.id}"
+                                onclick="openModal(this)">
+                            Delete
+                        </button>
+
+                    </form>
+                    <form th:action="@{/role/assign-permission}" method="post" class="assign-form">
+
+                        <input type="hidden" name="roleId" th:value="${role.id}">
+
+                        <select name="permissionId">
+                            <option th:each="perm : ${allPermissions}"
+                                    th:value="${perm.id}"
+                                    th:text="${perm.name}">
+                            </option>
+                        </select>
+
+                        <button type="submit">+ Add</button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+<!-- DELETE MODAL -->
+<div id="deleteModal" class="modal hidden">
+
+    <div class="modal-content">
+
+        <h2>Delete Role</h2>
+        <p>Are you sure you want to delete this role?</p>
+        <p class="warning">This action cannot be undone.</p>
+
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-confirm" onclick="confirmDelete()">Yes, delete</button>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+
+<script>
+
+    let deleteUrl = null;
+
+    function openModal(btn) {
+        const roleId = btn.getAttribute("data-role-id");
+        deleteUrl = "/exercise/role/delete/" + roleId;
+        document.getElementById("deleteModal").classList.remove("hidden");
+    }
+
+    function closeModal() {
+        deleteUrl = null;
+        document.getElementById("deleteModal").classList.add("hidden");
+    }
+
+    function confirmDelete() {
+        if (!deleteUrl) return;
+
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = deleteUrl;
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+</script>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Permission Form</title>
+
+    <link rel="stylesheet" th:href="@{/css/permission.css}">
+</head>
+
+<body>
+
+<div class="page-wrapper">
+
+    <header class="topbar">
+
+        <h1>Permission Form</h1>
+
+        <a th:href="@{/permission/view}" class="btn-small">Back</a>
+
+    </header>
+
+    <main class="content">
+
+        <section class="card">
+
+            <!-- CREATE -->
+            <form th:if="${permissionId == null}"
+                  th:action="@{/permission/create}"
+                  method="post">
+
+                <label>Name</label>
+                <input type="text"
+                       name="name"
+                       th:value="${permission.name}"
+                       required>
+
+                <button class="btn">Create</button>
+
+            </form>
+
+            <!-- UPDATE -->
+            <form th:if="${permissionId != null}"
+                  th:action="@{'/permission/update/' + ${permissionId}}"
+                  method="post">
+
+                <label>Name</label>
+                <input type="text"
+                       name="name"
+                       th:value="${permission.name}"
+                       required>
+
+                <button class="btn">Update</button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

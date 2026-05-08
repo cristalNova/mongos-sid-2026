@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <link rel="stylesheet" th:href="@{/css/user-list.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <link rel="stylesheet" th:href="@{/css/topbar.css}">
+</head>
+
+<body>
+
+<div class="page-wrapper">
+
+    <div th:replace="fragments/topbar :: topbar(${userName})"></div>
+
+    <main>
+
+        <div class="user-list">
+
+            <div class="user-row" th:each="user : ${users}">
+
+                <!-- INFO -->
+                <div class="info">
+                    <strong th:text="${user.firstName + ' ' + user.lastName}"></strong>
+                    <small th:text="${user.email}"></small>
+                </div>
+
+                <!-- ROLES -->
+                <div class="roles">
+                    <span class="chip" th:each="role : ${user.roles}"
+                          th:text="${role.name}"></span>
+                </div>
+
+                <div class="actions">
+
+                    <a sec:authorize="hasAuthority('MANAGE_USERS')"
+                       th:href="@{'/user/edit/' + ${user.id}}" class="btn-small">
+                        Edit
+                    </a>
+
+                    <form sec:authorize="hasAuthority('MANAGE_USERS')"
+                          th:action="@{'/user/delete/' + ${user.id}}" method="post">
+                        <button class="danger" onclick="return confirm('Delete user?')">
+                            Delete
+                        </button>
+                    </form>
+
+                    <a sec:authorize="hasAuthority('MANAGE_ROLES')"
+                       th:href="@{'/user/' + ${user.id} + '/roles'}" class="btn-small">
+                        Roles
+                    </a>
+
+                    <a sec:authorize="hasAuthority('ASSIGN_TRAINER')"
+                       th:if="${#lists.contains(user.roles.![name], 'USER')}"
+                       th:href="@{'/user/' + ${user.id} + '/trainer'}"
+                       class="btn-small">
+                        Assign Trainer
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>
