@@ -55,7 +55,15 @@ public class DataInitializer implements ApplicationRunner {
     // ── PostgreSQL ────────────────────────────────────────────────────────────
 
     private void seedSql() {
-        if (roleRepository.count() > 0) return;
+        // Re-seed if the full test dataset is not present (fewer than 10 users expected)
+        if (appUserRepository.count() >= 10) return;
+        // Clean existing partial data to avoid duplicates
+        if (roleRepository.count() > 0) {
+            recommendationRepository.deleteAll();
+            appUserRepository.deleteAll();
+            permissionRepository.deleteAll();
+            roleRepository.deleteAll();
+        }
 
         // Permisos
         Permission viewUsers     = perm("VIEW_USERS");
@@ -113,7 +121,8 @@ public class DataInitializer implements ApplicationRunner {
     // ── MongoDB ───────────────────────────────────────────────────────────────
 
     private void seedMongo() {
-        if (exerciseMongoRepository.count() > 0) return;
+        // Re-seed if the full exercise catalog is not present (15 exercises expected)
+        if (exerciseMongoRepository.count() >= 15) return;
 
         // ── Ejercicios (15) ──────────────────────────────────────────────────
 

@@ -140,7 +140,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ASSIGN_TRAINER')")
     public String trainerPage(@PathVariable int id, Model model) {
 
-        model.addAttribute("user", userService.getAppUserById(id));
+        model.addAttribute("user", userService.getAppUserWithTrainers(id));
         model.addAttribute("trainers", userService.getUsersByRoleId(roleService.getRoleByName("TRAINER").getId()));
 
         return "user/trainer";

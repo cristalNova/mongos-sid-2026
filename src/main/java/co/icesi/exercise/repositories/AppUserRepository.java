@@ -10,9 +10,21 @@ import java.util.Optional;
 
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUser, Integer> {
+
+    @EntityGraph(attributePaths = {"roles"})
+    List<AppUser> findAll();
+
     Optional<AppUser> findByEmail(String email);
+
+    @EntityGraph(attributePaths = {"roles"})
     List<AppUser> findByRolesId(Integer roleId);
+
+    @EntityGraph(attributePaths = {"roles"})
     List<AppUser> findByTrainersId(Integer trainerId);
+
     @EntityGraph(attributePaths = {"roles"})
     Optional<AppUser> findWithRolesByEmail(String email);
+
+    @EntityGraph(attributePaths = {"trainers"})
+    Optional<AppUser> findWithTrainersById(Integer id);
 }
