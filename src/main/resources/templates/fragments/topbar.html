@@ -11,13 +11,21 @@
         <a th:href="@{/user}" class="tab dashboard">Dashboard</a>
 
         <a sec:authorize="hasAuthority('VIEW_USERS')"
-           th:href="@{/user/list}" class="tab users">Users</a>
+           th:href="@{/user/list}" class="tab users">Usuarios</a>
+
+        <a th:href="@{/exercise/list}" class="tab exercises">Ejercicios</a>
+
+        <a th:href="@{/routine/list}" class="tab">Rutinas</a>
+
+        <a th:href="@{/event/list}" class="tab">Eventos</a>
+
+        <a th:href="@{/progress/list}" class="tab">Mi progreso</a>
 
         <a sec:authorize="hasAuthority('MANAGE_ROLES')"
-           th:href="@{/role/view}" class="tab exercises">Roles</a>
+           th:href="@{/role/view}" class="tab">Roles</a>
 
         <a sec:authorize="hasAuthority('MANAGE_PERMISSIONS')"
-           th:href="@{/permission/view}" class="tab permisos">Permissions</a>
+           th:href="@{/permission/view}" class="tab permisos">Permisos</a>
     </nav>
 
     <div class="user-box">

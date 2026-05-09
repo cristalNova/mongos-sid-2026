@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ejercicios de la rutina</title>
+    <link rel="stylesheet" th:href="@{/css/user-detail.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <header class="topbar">
+        <h1>Ejercicios — <span th:text="${routine.routineName}"></span></h1>
+        <a th:href="@{/routine/mine}" class="btn-small">Volver</a>
+    </header>
+
+    <main>
+        <section class="card">
+
+            <h2>Ejercicios en esta rutina</h2>
+            <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ddd;">Nombre</th>
+                        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ddd;">Tipo</th>
+                        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ddd;">Dificultad</th>
+                        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ddd;">Duración</th>
+                        <th style="padding:0.5rem; border-bottom:1px solid #ddd;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ex, stat : ${routine.exercises}">
+                        <td style="padding:0.5rem;" th:text="${ex.exerciseName}"></td>
+                        <td style="padding:0.5rem;" th:text="${ex.type}"></td>
+                        <td style="padding:0.5rem;" th:text="${ex.difficultyType}"></td>
+                        <td style="padding:0.5rem;" th:text="${ex.duration != null ? ex.duration + ' min' : '—'}"></td>
+                        <td style="padding:0.5rem;">
+                            <form th:action="@{'/routine/' + ${routine.id} + '/exercises/remove/' + ${stat.index}}"
+                                  method="post">
+                                <button class="danger" onclick="return confirm('¿Quitar ejercicio?')">Quitar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(routine.exercises)}">
+                        <td colspan="5" style="padding:1rem; color:#888;">Sin ejercicios asignados.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr style="margin: 1.5rem 0;">
+
+            <h2>Agregar ejercicio</h2>
+            <form th:action="@{'/routine/' + ${routine.id} + '/exercises/add'}"
+                  method="post" class="form">
+                <label>Seleccionar ejercicio</label>
+                <select name="exerciseId" required>
+                    <option value="" disabled selected>— Selecciona —</option>
+                    <option th:each="ex : ${allExercises}"
+                            th:value="${ex.id}"
+                            th:text="${ex.exerciseName + ' (' + ex.type + ')'}"></option>
+                </select>
+                <button type="submit" class="btn">Agregar</button>
+            </form>
+
+        </section>
+    </main>
+
+</div>
+
+</body>
+</html>

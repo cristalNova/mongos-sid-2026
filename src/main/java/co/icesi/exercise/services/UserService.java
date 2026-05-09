@@ -30,6 +30,11 @@ public class UserService {
         return appUserRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
     }
 
+    public AppUser getUserByEmail(String email) {
+        return appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con email: " + email));
+    }
+
     public List<AppUser> getUsersByRoleId(int roleId) {
         return appUserRepository.findByRolesId(roleId);
     }

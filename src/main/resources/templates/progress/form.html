@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de progreso</title>
+    <link rel="stylesheet" th:href="@{/css/user-detail.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <header class="topbar">
+        <h1 th:text="${record.id == null ? 'Nuevo registro' : 'Editar registro'}">Progreso</h1>
+        <a th:href="@{/progress/list}" class="btn-small">Volver</a>
+    </header>
+
+    <main>
+        <section class="card">
+
+            <form th:action="${record.id == null ? '/progress/create' : '/progress/update/' + record.id}"
+                  method="post" class="form">
+
+                <div th:if="${record.id == null}">
+                    <label>Rutina</label>
+                    <select name="routineId" required>
+                        <option value="" disabled selected>— Selecciona una rutina —</option>
+                        <option th:each="r : ${routines}"
+                                th:value="${r.id}"
+                                th:text="${r.routineName}"></option>
+                    </select>
+                </div>
+
+                <label>Nombre del ejercicio</label>
+                <input type="text" name="exerciseName" th:value="${record.exerciseName}">
+
+                <label>Fecha</label>
+                <input type="date" name="date"
+                       th:value="${record.date != null ? #dates.format(record.date, 'yyyy-MM-dd') : ''}">
+
+                <label>Hora</label>
+                <input type="text" name="time" placeholder="ej: 08:30"
+                       th:value="${record.time}">
+
+                <label>Series</label>
+                <input type="number" name="series" th:value="${record.series}">
+
+                <label>Repeticiones</label>
+                <input type="number" name="repetitions" th:value="${record.repetitions}">
+
+                <label>Peso (kg)</label>
+                <input type="number" step="0.5" name="weight" th:value="${record.weight}">
+
+                <label>Equipo utilizado</label>
+                <input type="text" name="equipmentUsed" th:value="${record.equipmentUsed}">
+
+                <label>Notas de progreso</label>
+                <textarea name="progressNotes" rows="3"
+                          th:text="${record.progressNotes}"></textarea>
+
+                <button type="submit" class="btn"
+                        th:text="${record.id == null ? 'Guardar registro' : 'Actualizar registro'}">Guardar</button>
+            </form>
+
+        </section>
+    </main>
+
+</div>
+
+</body>
+</html>

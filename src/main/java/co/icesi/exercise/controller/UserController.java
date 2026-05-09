@@ -61,8 +61,9 @@ public class UserController {
         user.setWeight(dto.getWeight());
         user.setHeight(dto.getHeight());
 
-        // rol default (USER)
-        userService.createAppUser(user, new ArrayList<>(java.util.List.of(1)));
+        // rol default (USER) — buscar por nombre para no depender del id
+        int userRoleId = roleService.getRoleByName("USER").getId();
+        userService.createAppUser(user, new ArrayList<>(java.util.List.of(userRoleId)));
 
         return "redirect:/login";
     }

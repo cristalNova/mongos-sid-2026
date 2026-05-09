@@ -1,65 +1,86 @@
 package co.icesi.exercise.services;
 
-import co.icesi.exercise.model.Event;
-import co.icesi.exercise.model.PhysicalSpace;
-import co.icesi.exercise.repositories.EventRepository;
-import co.icesi.exercise.repositories.PhysicalSpaceRepository;
+import co.icesi.exercise.model.AppUser;
+import co.icesi.exercise.model.nosql.EventDocument;
+import co.icesi.exercise.model.nosql.SubscriptionDocument;
+import co.icesi.exercise.repositories.AppUserRepository;
+import co.icesi.exercise.repositories.nosql.EventMongoRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EventService {
 
     @Autowired
-    private EventRepository eventRepository;
+    private EventMongoRepository eventMongoRepository;
     @Autowired
-    private PhysicalSpaceRepository physicalSpaceRepository;
+    private AppUserRepository appUserRepository;
 
-    public List<Event> getAllEvents() {
-        return eventRepository.findAll();
+    public List<EventDocument> getAllEvents() {
+        return eventMongoRepository.findAll();
     }
 
-    public Event getEventById(int id) {
-        return eventRepository.findById(id)
+    public EventDocument getEventById(String id) {
+        return eventMongoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento no encontrado con id: " + id));
     }
 
-    public List<Event> getEventsByPhysicalSpaceId(int physicalSpaceId) {
-        return eventRepository.findByPhysicalSpaceId(physicalSpaceId);
+    public EventDocument createEvent(EventDocument event) {
+        return eventMongoRepository.save(event);
     }
 
-    @Transactional
-    public Event createEvent(Event event, int physicalSpaceId) {
-        PhysicalSpace physicalSpace = physicalSpaceRepository.findById(physicalSpaceId)
-                .orElseThrow(() -> new EntityNotFoundException("Espacio físico no encontrado con id: " + physicalSpaceId));
-        event.setPhysicalSpace(physicalSpace);
-        return eventRepository.save(event);
-    }
-
-    @Transactional
-    public Event updateEvent(int id, Event updatedEvent, Integer physicalSpaceId) {
-        Event existingEvent = getEventById(id);
-        existingEvent.setName(updatedEvent.getName());
-        existingEvent.setDate(updatedEvent.getDate());
-        existingEvent.setDescription(updatedEvent.getDescription());
-
-        if (physicalSpaceId != null) {
-            PhysicalSpace physicalSpace = physicalSpaceRepository.findById(physicalSpaceId)
-                    .orElseThrow(() -> new EntityNotFoundException("Espacio físico no encontrado con id: " + physicalSpaceId));
-            existingEvent.setPhysicalSpace(physicalSpace);
+    public EventDocument updateEvent(String id, EventDocument updated) {
+        EventDocument existing = getEventById(id);
+        existing.setName(updated.getName());
+        existing.setDate(updated.getDate());
+        existing.setDescription(updated.getDescription());
+        if (updated.getPhysicalSpace() != null) {
+            existing.setPhysicalSpace(updated.getPhysicalSpace());
         }
-
-        return eventRepository.save(existingEvent);
+        return eventMongoRepository.save(existing);
     }
 
-    @Transactional
-    public void deleteEvent(int id) {
-        Event existingEvent = getEventById(id);
-        eventRepository.delete(existingEvent);
+    public void deleteEvent(String id) {
+        EventDocument existing = getEventById(id);
+        eventMongoRepository.delete(existing);
+    }
+
+    public EventDocument subscribeUser(String eventId, int userId) {
+        EventDocument event = getEventById(eventId);
+        boolean alreadySubscribed = event.getSubscriptions().stream()
+                .anyMatch(s -> s.getUserId() != null && s.getUserId() == userId);
+        if (alreadySubscribed) {
+            return event;
+        }
+        AppUser user = appUserRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + userId));
+
+        SubscriptionDocument sub = new SubscriptionDocument();
+        sub.setUserId(user.getId());
+        sub.setUserFirstName(user.getFirstName());
+        sub.setUserLastName(user.getLastName());
+        sub.setAttendance(false);
+
+        event.getSubscriptions().add(sub);
+        return eventMongoRepository.save(event);
+    }
+
+    public EventDocument unsubscribeUser(String eventId, int userId) {
+        EventDocument event = getEventById(eventId);
+        event.getSubscriptions().removeIf(s -> s.getUserId() != null && s.getUserId() == userId);
+        return eventMongoRepository.save(event);
+    }
+
+    public EventDocument markAttendance(String eventId, int userId, boolean attended) {
+        EventDocument event = getEventById(eventId);
+        event.getSubscriptions().stream()
+                .filter(s -> s.getUserId() != null && s.getUserId() == userId)
+                .findFirst()
+                .ifPresent(s -> s.setAttendance(attended));
+        return eventMongoRepository.save(event);
     }
 }

@@ -105,19 +105,39 @@
 
         <section class="cards-grid">
 
+            <a th:href="@{/exercise/list}" class="dashboard-card">
+                <h3>Ejercicios</h3>
+                <p>Explora la base de datos de ejercicios con información de tipo, dificultad y videos.</p>
+            </a>
+
+            <a th:href="@{/routine/list}" class="dashboard-card">
+                <h3>Rutinas</h3>
+                <p>Crea y gestiona tus rutinas de entrenamiento personalizadas.</p>
+            </a>
+
+            <a th:href="@{/event/list}" class="dashboard-card">
+                <h3>Eventos</h3>
+                <p>Consulta clases, talleres y espacios disponibles e inscríbete.</p>
+            </a>
+
+            <a th:href="@{/progress/list}" class="dashboard-card">
+                <h3>Mi progreso</h3>
+                <p>Registra y revisa tu historial de series, repeticiones y métricas.</p>
+            </a>
+
             <a sec:authorize="hasAuthority('VIEW_USERS')" th:href="@{/user/list}" class="dashboard-card">
-                <h3>Users</h3>
-                <p>Check the registered users of the system.</p>
+                <h3>Usuarios</h3>
+                <p>Gestiona los usuarios registrados en el sistema.</p>
             </a>
 
             <a sec:authorize="hasAuthority('MANAGE_ROLES')" th:href="@{/role/view}" class="dashboard-card">
                 <h3>Roles</h3>
-                <p>View the roles available in the application.</p>
+                <p>Administra los roles disponibles en la aplicación.</p>
             </a>
 
             <a sec:authorize="hasAuthority('MANAGE_PERMISSIONS')" th:href="@{/permission/view}" class="dashboard-card">
-                <h3>Permissions</h3>
-                <p>Review the permissions configured in the platform</p>
+                <h3>Permisos</h3>
+                <p>Revisa los permisos configurados en la plataforma.</p>
             </a>
 
         </section>

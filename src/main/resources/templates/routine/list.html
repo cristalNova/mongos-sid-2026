@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Rutinas</title>
+    <link rel="stylesheet" th:href="@{/css/user-list.css}">
+    <link rel="stylesheet" th:href="@{/css/topbar.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <div th:replace="fragments/topbar :: topbar(${userName})"></div>
+
+    <main>
+
+        <div class="user-list">
+
+            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center; gap:1rem;">
+                <h2 style="margin:0;">Rutinas</h2>
+                <div style="display:flex; gap:0.5rem;">
+                    <a th:href="@{/routine/list}" class="btn-small">Públicas</a>
+                    <a th:href="@{/routine/mine}" class="btn-small">Mis rutinas</a>
+                    <a th:href="@{/routine/new}" class="btn-small">+ Nueva</a>
+                </div>
+            </div>
+
+            <div class="user-row" th:each="routine : ${routines}">
+
+                <div class="info">
+                    <strong th:text="${routine.routineName}"></strong>
+                    <small th:text="${routine.type + ' · ' + routine.difficultyType}"></small>
+                    <small th:text="'Creada por: ' + ${routine.ownerFirstName + ' ' + routine.ownerLastName}"></small>
+                </div>
+
+                <div class="roles">
+                    <span class="chip"
+                          th:text="${routine.visibility ? 'Pública' : 'Privada'}"
+                          th:style="${routine.visibility ? 'background:#d4edda; color:#155724;' : 'background:#f8d7da; color:#721c24;'}"></span>
+                    <span class="chip" th:text="${#lists.size(routine.exercises) + ' ejercicios'}"></span>
+                </div>
+
+                <div class="actions">
+                    <a th:href="@{'/routine/' + ${routine.id} + '/exercises'}" class="btn-small">Ejercicios</a>
+                    <a th:href="@{'/routine/edit/' + ${routine.id}}" class="btn-small">Editar</a>
+                    <form th:action="@{'/routine/delete/' + ${routine.id}}" method="post">
+                        <button class="danger" onclick="return confirm('¿Eliminar rutina?')">Eliminar</button>
+                    </form>
+                </div>
+
+            </div>
+
+            <p th:if="${#lists.isEmpty(routines)}" style="color:#888; padding:1rem;">
+                No hay rutinas disponibles.
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -25,6 +25,11 @@ public class RoleService {
         return roleRepository.findAll();
     }
 
+    public Role getRoleByName(String name) {
+        return roleRepository.findByName(name)
+                .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado: " + name));
+    }
+
     public Role getRoleById(int id) {
         return roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Rol no encontrado con id: " + id));

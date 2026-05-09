@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ejercicio</title>
+    <link rel="stylesheet" th:href="@{/css/user-detail.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <header class="topbar">
+        <h1 th:text="${exercise.id == null ? 'Nuevo ejercicio' : 'Editar ejercicio'}">Ejercicio</h1>
+        <a th:href="@{/exercise/list}" class="btn-small">Volver</a>
+    </header>
+
+    <main>
+        <section class="card">
+
+            <form th:action="${exercise.id == null ? '/exercise/create' : '/exercise/update/' + exercise.id}"
+                  method="post" class="form">
+
+                <label>Nombre del ejercicio</label>
+                <input type="text" name="exerciseName" th:value="${exercise.exerciseName}" required>
+
+                <label>Descripción</label>
+                <textarea name="description" rows="3" th:text="${exercise.description}"></textarea>
+
+                <label>Tipo (ej: cardio, fuerza, movilidad)</label>
+                <input type="text" name="type" th:value="${exercise.type}">
+
+                <label>Nivel de dificultad (ej: FÁCIL, MEDIO, DIFÍCIL)</label>
+                <input type="text" name="difficultyType" th:value="${exercise.difficultyType}">
+
+                <label>Duración (minutos)</label>
+                <input type="number" step="0.1" name="duration" th:value="${exercise.duration}">
+
+                <button type="submit" class="btn"
+                        th:text="${exercise.id == null ? 'Crear ejercicio' : 'Actualizar ejercicio'}">Guardar</button>
+            </form>
+
+        </section>
+    </main>
+
+</div>
+
+</body>
+</html>

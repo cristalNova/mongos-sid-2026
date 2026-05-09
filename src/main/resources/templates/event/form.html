@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Evento</title>
+    <link rel="stylesheet" th:href="@{/css/user-detail.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <header class="topbar">
+        <h1 th:text="${event.id == null ? 'Nuevo evento' : 'Editar evento'}">Evento</h1>
+        <a th:href="@{/event/list}" class="btn-small">Volver</a>
+    </header>
+
+    <main>
+        <section class="card">
+
+            <form th:action="${event.id == null ? '/event/create' : '/event/update/' + event.id}"
+                  method="post" class="form">
+
+                <label>Nombre del evento</label>
+                <input type="text" name="name"
+                       th:value="${event.name}" required>
+
+                <label>Descripción</label>
+                <textarea name="description" rows="3"
+                          th:text="${event.description}"></textarea>
+
+                <label>Fecha</label>
+                <input type="date" name="date"
+                       th:value="${event.date != null ? #dates.format(event.date, 'yyyy-MM-dd') : ''}">
+
+                <h3 style="margin-top:1.5rem;">Espacio físico</h3>
+
+                <label>Nombre del espacio</label>
+                <input type="text" name="physicalSpace.name"
+                       th:value="${event.physicalSpace != null ? event.physicalSpace.name : ''}">
+
+                <label>Ubicación</label>
+                <input type="text" name="physicalSpace.location"
+                       th:value="${event.physicalSpace != null ? event.physicalSpace.location : ''}">
+
+                <label>Capacidad</label>
+                <input type="number" name="physicalSpace.capacity"
+                       th:value="${event.physicalSpace != null ? event.physicalSpace.capacity : ''}">
+
+                <button type="submit" class="btn"
+                        th:text="${event.id == null ? 'Crear evento' : 'Actualizar evento'}">Guardar</button>
+            </form>
+
+        </section>
+    </main>
+
+</div>
+
+</body>
+</html>

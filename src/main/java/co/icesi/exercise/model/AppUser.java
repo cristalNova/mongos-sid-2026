@@ -35,7 +35,6 @@ public class AppUser {
             joinColumns = @JoinColumn(name = "userId"),
             inverseJoinColumns = @JoinColumn(name = "roleId")
     )
-
     private List<Role> roles;
 
     //user-trainer relationship
@@ -48,7 +47,6 @@ public class AppUser {
     )
     private List<AppUser> trainers;
 
-
     @JsonIgnore
     @ManyToMany(mappedBy = "trainers")
     private List<AppUser> users;
@@ -59,8 +57,4 @@ public class AppUser {
 
     @OneToMany(mappedBy = "receiver")
     private List<Recommendation> recommendationsReceived;
-
-    //subscription
-    @OneToMany(mappedBy = "user")
-    private List<Subscription> subscriptions;
 }

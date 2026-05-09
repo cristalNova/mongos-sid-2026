@@ -1,12 +1,11 @@
 package co.icesi.exercise.services;
 
-import co.icesi.exercise.model.Exercise;
-import co.icesi.exercise.repositories.ExerciseRepository;
+import co.icesi.exercise.model.nosql.ExerciseDocument;
+import co.icesi.exercise.model.nosql.VisualSupportDocument;
+import co.icesi.exercise.repositories.nosql.ExerciseMongoRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,37 +13,49 @@ import java.util.List;
 public class ExerciseService {
 
     @Autowired
-    private ExerciseRepository exerciseRepository;
+    private ExerciseMongoRepository exerciseMongoRepository;
 
-    public List<Exercise> getAllExercises() {
-        return exerciseRepository.findAll();
+    public List<ExerciseDocument> getAllExercises() {
+        return exerciseMongoRepository.findAll();
     }
 
-    public Exercise getExerciseById(int id) {
-        return exerciseRepository.findById(id)
+    public ExerciseDocument getExerciseById(String id) {
+        return exerciseMongoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Ejercicio no encontrado con id: " + id));
     }
 
-    public List<Exercise> searchExercisesByName(String exerciseName) {
-        return exerciseRepository.findByExerciseNameContainingIgnoreCase(exerciseName);
+    public List<ExerciseDocument> searchExercisesByName(String name) {
+        return exerciseMongoRepository.findByExerciseNameContainingIgnoreCase(name);
     }
 
-    @Transactional
-    public Exercise createExercise(Exercise exercise) {
-        return exerciseRepository.save(exercise);
+    public ExerciseDocument createExercise(ExerciseDocument exercise) {
+        return exerciseMongoRepository.save(exercise);
     }
 
-    @Transactional
-    public Exercise updateExercise(int id, Exercise updatedExercise) {
-        Exercise existingExercise = getExerciseById(id);
-        existingExercise.setExerciseName(updatedExercise.getExerciseName());
-        existingExercise.setDescription(updatedExercise.getDescription());
-        return exerciseRepository.save(existingExercise);
+    public ExerciseDocument updateExercise(String id, ExerciseDocument updated) {
+        ExerciseDocument existing = getExerciseById(id);
+        existing.setExerciseName(updated.getExerciseName());
+        existing.setDescription(updated.getDescription());
+        existing.setType(updated.getType());
+        existing.setDifficultyType(updated.getDifficultyType());
+        existing.setDuration(updated.getDuration());
+        return exerciseMongoRepository.save(existing);
     }
 
-    @Transactional
-    public void deleteExercise(int id) {
-        Exercise existingExercise = getExerciseById(id);
-        exerciseRepository.delete(existingExercise);
+    public void deleteExercise(String id) {
+        ExerciseDocument existing = getExerciseById(id);
+        exerciseMongoRepository.delete(existing);
+    }
+
+    public ExerciseDocument addVisualSupport(String exerciseId, VisualSupportDocument vs) {
+        ExerciseDocument exercise = getExerciseById(exerciseId);
+        exercise.getVisualSupports().add(vs);
+        return exerciseMongoRepository.save(exercise);
+    }
+
+    public ExerciseDocument removeVisualSupport(String exerciseId, int index) {
+        ExerciseDocument exercise = getExerciseById(exerciseId);
+        exercise.getVisualSupports().remove(index);
+        return exerciseMongoRepository.save(exercise);
     }
 }

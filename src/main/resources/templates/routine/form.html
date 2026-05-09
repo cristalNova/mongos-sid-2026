@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rutina</title>
+    <link rel="stylesheet" th:href="@{/css/user-detail.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <header class="topbar">
+        <h1 th:text="${routine.id == null ? 'Nueva rutina' : 'Editar rutina'}">Rutina</h1>
+        <a th:href="@{/routine/mine}" class="btn-small">Volver</a>
+    </header>
+
+    <main>
+        <section class="card">
+
+            <form th:action="${routine.id == null ? '/routine/create' : '/routine/update/' + routine.id}"
+                  method="post" class="form">
+
+                <label>Nombre de la rutina</label>
+                <input type="text" name="routineName" th:value="${routine.routineName}" required>
+
+                <label>Tipo (ej: fuerza, cardio, mixto)</label>
+                <input type="text" name="type" th:value="${routine.type}">
+
+                <label>Nivel de dificultad (ej: FÁCIL, MEDIO, DIFÍCIL)</label>
+                <input type="text" name="difficultyType" th:value="${routine.difficultyType}">
+
+                <label>Visibilidad</label>
+                <select name="visibility">
+                    <option value="true"  th:selected="${routine.visibility == true}">Pública</option>
+                    <option value="false" th:selected="${routine.visibility == false}">Privada</option>
+                </select>
+
+                <button type="submit" class="btn"
+                        th:text="${routine.id == null ? 'Crear rutina' : 'Actualizar rutina'}">Guardar</button>
+            </form>
+
+        </section>
+    </main>
+
+</div>
+
+</body>
+</html>

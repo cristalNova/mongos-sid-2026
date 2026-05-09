@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Eventos</title>
+    <link rel="stylesheet" th:href="@{/css/user-list.css}">
+    <link rel="stylesheet" th:href="@{/css/topbar.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <div th:replace="fragments/topbar :: topbar(${userName})"></div>
+
+    <main>
+
+        <div class="user-list">
+
+            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin:0;">Eventos</h2>
+                <a sec:authorize="hasAuthority('MANAGE_USERS')"
+                   th:href="@{/event/new}" class="btn-small">+ Nuevo evento</a>
+            </div>
+
+            <div class="user-row" th:each="event : ${events}">
+
+                <div class="info">
+                    <strong th:text="${event.name}"></strong>
+                    <small th:text="${event.description}"></small>
+                    <small th:if="${event.physicalSpace != null}"
+                           th:text="${'📍 ' + event.physicalSpace.name + ' — ' + event.physicalSpace.location}"></small>
+                </div>
+
+                <div class="roles">
+                    <span class="chip" th:text="${event.date != null ? #dates.format(event.date, 'dd/MM/yyyy') : '—'}"></span>
+                    <span class="chip" th:text="${#lists.size(event.subscriptions) + ' inscripciones'}"></span>
+                </div>
+
+                <div class="actions">
+
+                    <form th:action="@{'/event/' + ${event.id} + '/subscribe'}" method="post">
+                        <button class="btn-small">Inscribirme</button>
+                    </form>
+
+                    <form th:action="@{'/event/' + ${event.id} + '/unsubscribe'}" method="post">
+                        <button class="btn-small">Cancelar inscripción</button>
+                    </form>
+
+                    <a sec:authorize="hasAuthority('MANAGE_USERS')"
+                       th:href="@{'/event/edit/' + ${event.id}}" class="btn-small">Editar</a>
+
+                    <form sec:authorize="hasAuthority('MANAGE_USERS')"
+                          th:action="@{'/event/delete/' + ${event.id}}" method="post">
+                        <button class="danger" onclick="return confirm('¿Eliminar evento?')">Eliminar</button>
+                    </form>
+
+                </div>
+
+            </div>
+
+            <p th:if="${#lists.isEmpty(events)}" style="color:#888; padding:1rem;">
+                No hay eventos registrados.
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

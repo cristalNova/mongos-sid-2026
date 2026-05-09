@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Ejercicios</title>
+    <link rel="stylesheet" th:href="@{/css/user-list.css}">
+    <link rel="stylesheet" th:href="@{/css/topbar.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <div th:replace="fragments/topbar :: topbar(${userName})"></div>
+
+    <main>
+
+        <div class="user-list">
+
+            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin:0;">Ejercicios</h2>
+                <a sec:authorize="hasAuthority('MANAGE_USERS')"
+                   th:href="@{/exercise/new}" class="btn-small">+ Nuevo ejercicio</a>
+            </div>
+
+            <div class="user-row" th:each="exercise : ${exercises}">
+
+                <div class="info">
+                    <strong th:text="${exercise.exerciseName}"></strong>
+                    <small th:text="${exercise.type + ' · ' + exercise.difficultyType}"></small>
+                    <small th:text="${exercise.description}"></small>
+                </div>
+
+                <div class="roles">
+                    <span class="chip" th:text="${exercise.duration != null ? exercise.duration + ' min' : '—'}"></span>
+                </div>
+
+                <div class="actions">
+                    <a sec:authorize="hasAuthority('MANAGE_USERS')"
+                       th:href="@{'/exercise/edit/' + ${exercise.id}}" class="btn-small">Editar</a>
+
+                    <a sec:authorize="hasAuthority('MANAGE_USERS')"
+                       th:href="@{'/exercise/' + ${exercise.id} + '/visual-supports'}" class="btn-small">Videos</a>
+
+                    <form sec:authorize="hasAuthority('MANAGE_USERS')"
+                          th:action="@{'/exercise/delete/' + ${exercise.id}}" method="post">
+                        <button class="danger" onclick="return confirm('¿Eliminar ejercicio?')">Eliminar</button>
+                    </form>
+                </div>
+
+            </div>
+
+            <p th:if="${#lists.isEmpty(exercises)}" style="color:#888; padding:1rem;">
+                No hay ejercicios registrados.
+            </p>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

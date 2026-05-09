@@ -1,14 +1,14 @@
 package co.icesi.exercise.services;
 
-import co.icesi.exercise.model.ProgressRecord;
-import co.icesi.exercise.model.RoutineExercise;
-import co.icesi.exercise.repositories.ProgressRecordRepository;
-import co.icesi.exercise.repositories.RoutineExerciseRepository;
+import co.icesi.exercise.model.AppUser;
+import co.icesi.exercise.model.nosql.ProgressRecordDocument;
+import co.icesi.exercise.model.nosql.RoutineDocument;
+import co.icesi.exercise.repositories.AppUserRepository;
+import co.icesi.exercise.repositories.nosql.ProgressRecordMongoRepository;
+import co.icesi.exercise.repositories.nosql.RoutineMongoRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,54 +16,58 @@ import java.util.List;
 public class ProgressRecordService {
 
     @Autowired
-    private ProgressRecordRepository progressRecordRepository;
+    private ProgressRecordMongoRepository progressRecordMongoRepository;
     @Autowired
-    private RoutineExerciseRepository routineExerciseRepository;
+    private AppUserRepository appUserRepository;
+    @Autowired
+    private RoutineMongoRepository routineMongoRepository;
 
-    public List<ProgressRecord> getAllProgressRecords() {
-        return progressRecordRepository.findAll();
+    public List<ProgressRecordDocument> getAllProgressRecords() {
+        return progressRecordMongoRepository.findAll();
     }
 
-    public ProgressRecord getProgressRecordById(int id) {
-        return progressRecordRepository.findById(id)
+    public ProgressRecordDocument getProgressRecordById(String id) {
+        return progressRecordMongoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Registro de progreso no encontrado con id: " + id));
     }
 
-    public List<ProgressRecord> getProgressRecordsByRoutineExerciseId(int routineExerciseId) {
-        return progressRecordRepository.findByRoutineExerciseId(routineExerciseId);
+    public List<ProgressRecordDocument> getProgressRecordsByUserId(Integer userId) {
+        return progressRecordMongoRepository.findByUserId(userId);
     }
 
-    @Transactional
-    public ProgressRecord createProgressRecord(ProgressRecord progressRecord, int routineExerciseId) {
-        RoutineExercise routineExercise = routineExerciseRepository.findById(routineExerciseId)
-                .orElseThrow(() -> new EntityNotFoundException("Relación rutina-ejercicio no encontrada con id: " + routineExerciseId));
-        progressRecord.setRoutineExercise(routineExercise);
-        return progressRecordRepository.save(progressRecord);
+    public List<ProgressRecordDocument> getProgressRecordsByRoutineId(String routineId) {
+        return progressRecordMongoRepository.findByRoutineId(routineId);
     }
 
-    @Transactional
-    public ProgressRecord updateProgressRecord(int id, ProgressRecord updatedProgressRecord, Integer routineExerciseId) {
-        ProgressRecord existingProgressRecord = getProgressRecordById(id);
-        existingProgressRecord.setDate(updatedProgressRecord.getDate());
-        existingProgressRecord.setTime(updatedProgressRecord.getTime());
-        existingProgressRecord.setProgressNotes(updatedProgressRecord.getProgressNotes());
-        existingProgressRecord.setSeries(updatedProgressRecord.getSeries());
-        existingProgressRecord.setRepetitions(updatedProgressRecord.getRepetitions());
-        existingProgressRecord.setWeight(updatedProgressRecord.getWeight());
-        existingProgressRecord.setEquipmentUsed(updatedProgressRecord.getEquipmentUsed());
+    public ProgressRecordDocument createProgressRecord(ProgressRecordDocument record, int userId, String routineId) {
+        AppUser user = appUserRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + userId));
+        RoutineDocument routine = routineMongoRepository.findById(routineId)
+                .orElseThrow(() -> new EntityNotFoundException("Rutina no encontrada con id: " + routineId));
 
-        if (routineExerciseId != null) {
-            RoutineExercise routineExercise = routineExerciseRepository.findById(routineExerciseId)
-                    .orElseThrow(() -> new EntityNotFoundException("Relación rutina-ejercicio no encontrada con id: " + routineExerciseId));
-            existingProgressRecord.setRoutineExercise(routineExercise);
-        }
-
-        return progressRecordRepository.save(existingProgressRecord);
+        record.setUserId(user.getId());
+        record.setUserFirstName(user.getFirstName());
+        record.setUserLastName(user.getLastName());
+        record.setRoutineId(routine.getId());
+        record.setRoutineName(routine.getRoutineName());
+        return progressRecordMongoRepository.save(record);
     }
 
-    @Transactional
-    public void deleteProgressRecord(int id) {
-        ProgressRecord existingProgressRecord = getProgressRecordById(id);
-        progressRecordRepository.delete(existingProgressRecord);
+    public ProgressRecordDocument updateProgressRecord(String id, ProgressRecordDocument updated) {
+        ProgressRecordDocument existing = getProgressRecordById(id);
+        existing.setDate(updated.getDate());
+        existing.setTime(updated.getTime());
+        existing.setProgressNotes(updated.getProgressNotes());
+        existing.setSeries(updated.getSeries());
+        existing.setRepetitions(updated.getRepetitions());
+        existing.setWeight(updated.getWeight());
+        existing.setEquipmentUsed(updated.getEquipmentUsed());
+        existing.setExerciseName(updated.getExerciseName());
+        return progressRecordMongoRepository.save(existing);
+    }
+
+    public void deleteProgressRecord(String id) {
+        ProgressRecordDocument existing = getProgressRecordById(id);
+        progressRecordMongoRepository.delete(existing);
     }
 }
