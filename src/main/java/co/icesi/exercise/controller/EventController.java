@@ -11,6 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Controller
 @RequestMapping("/event")
 public class EventController {
@@ -23,7 +27,16 @@ public class EventController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public String list(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        model.addAttribute("events", eventService.getAllEvents());
+        int currentUserId = userService.getUserByEmail(userDetails.getUsername()).getId();
+        List<EventDocument> events = eventService.getAllEvents();
+        Set<String> subscribedEventIds = new HashSet<>();
+        for (EventDocument ev : events) {
+            boolean subscribed = ev.getSubscriptions().stream()
+                    .anyMatch(s -> s.getUserId() != null && s.getUserId().equals(currentUserId));
+            if (subscribed) subscribedEventIds.add(ev.getId());
+        }
+        model.addAttribute("events", events);
+        model.addAttribute("subscribedEventIds", subscribedEventIds);
         model.addAttribute("userName", userDetails.getUsername());
         return "event/list";
     }

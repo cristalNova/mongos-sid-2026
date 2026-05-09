@@ -37,16 +37,21 @@
                 <div class="roles">
                     <span class="chip" th:text="${event.date != null ? #dates.format(event.date, 'dd/MM/yyyy') : '—'}"></span>
                     <span class="chip" th:text="${#lists.size(event.subscriptions) + ' inscripciones'}"></span>
+                    <span class="chip"
+                          th:text="${subscribedEventIds.contains(event.id) ? '✓ Inscrito' : 'No inscrito'}"
+                          th:style="${subscribedEventIds.contains(event.id) ? 'background:#d4edda; color:#155724;' : 'background:#f8d7da; color:#721c24;'}"></span>
                 </div>
 
                 <div class="actions">
 
-                    <form th:action="@{'/event/' + ${event.id} + '/subscribe'}" method="post">
-                        <button class="btn-small">Inscribirme</button>
+                    <form th:if="${!subscribedEventIds.contains(event.id)}"
+                          th:action="@{'/event/' + ${event.id} + '/subscribe'}" method="post">
+                        <button class="btn-small" style="background:#28a745; color:#fff;">Inscribirme</button>
                     </form>
 
-                    <form th:action="@{'/event/' + ${event.id} + '/unsubscribe'}" method="post">
-                        <button class="btn-small">Cancelar inscripción</button>
+                    <form th:if="${subscribedEventIds.contains(event.id)}"
+                          th:action="@{'/event/' + ${event.id} + '/unsubscribe'}" method="post">
+                        <button class="btn-small" style="background:#dc3545; color:#fff;">Cancelar inscripción</button>
                     </form>
 
                     <a sec:authorize="hasAuthority('MANAGE_USERS')"
