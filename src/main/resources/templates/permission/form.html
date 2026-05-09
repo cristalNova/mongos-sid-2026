@@ -1,60 +1,43 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Permission Form</title>
-
-    <link rel="stylesheet" th:href="@{/css/permission.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permiso</title>
+    <link rel="stylesheet" th:href="@{/css/user-detail.css}">
+    <link rel="stylesheet" th:href="@{/css/topbar.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
 </head>
-
 <body>
 
 <div class="page-wrapper">
 
-    <header class="topbar">
+    <div th:replace="fragments/topbar :: topbar(${userName})"></div>
 
-        <h1>Permission Form</h1>
+    <main>
+        <section class="card" style="max-width:480px; margin:2rem auto;">
 
-        <a th:href="@{/permission/view}" class="btn-small">Back</a>
+            <h2 th:text="${permissionId == null ? 'Nuevo permiso' : 'Editar permiso'}">Permiso</h2>
 
-    </header>
-
-    <main class="content">
-
-        <section class="card">
-
-            <!-- CREATE -->
             <form th:if="${permissionId == null}"
                   th:action="@{/permission/create}"
-                  method="post">
-
-                <label>Name</label>
-                <input type="text"
-                       name="name"
-                       th:value="${permission.name}"
-                       required>
-
-                <button class="btn">Create</button>
-
+                  method="post" class="form">
+                <label>Nombre</label>
+                <input type="text" name="name" th:value="${permission.name}" required>
+                <button class="btn">Crear permiso</button>
             </form>
 
-            <!-- UPDATE -->
             <form th:if="${permissionId != null}"
                   th:action="@{'/permission/update/' + ${permissionId}}"
-                  method="post">
-
-                <label>Name</label>
-                <input type="text"
-                       name="name"
-                       th:value="${permission.name}"
-                       required>
-
-                <button class="btn">Update</button>
-
+                  method="post" class="form">
+                <label>Nombre</label>
+                <input type="text" name="name" th:value="${permission.name}" required>
+                <button class="btn">Actualizar permiso</button>
             </form>
 
-        </section>
+            <a th:href="@{/permission/view}" class="btn-small" style="margin-top:1rem; display:inline-block;">Volver</a>
 
+        </section>
     </main>
 
 </div>

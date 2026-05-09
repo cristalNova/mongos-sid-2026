@@ -4,6 +4,7 @@ import co.icesi.exercise.model.Permission;
 import co.icesi.exercise.services.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,9 @@ public class PermissionController {
 
     @GetMapping("/create")
     @PreAuthorize("hasAuthority('MANAGE_PERMISSIONS')")
-    public String createForm(Model model) {
+    public String createForm(Model model, Authentication authentication) {
         model.addAttribute("permission", new PermissionDTO());
+        model.addAttribute("userName", authentication.getName());
         return "permission/form";
     }
 
@@ -37,7 +39,7 @@ public class PermissionController {
     }
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAuthority('MANAGE_PERMISSIONS')")
-    public String editForm(@PathVariable int id, Model model) {
+    public String editForm(@PathVariable int id, Model model, Authentication authentication) {
 
         Permission permission = permissionService.getPermissionById(id);
 
@@ -46,6 +48,7 @@ public class PermissionController {
 
         model.addAttribute("permission", dto);
         model.addAttribute("permissionId", id);
+        model.addAttribute("userName", authentication.getName());
 
         return "permission/form";
     }
@@ -70,9 +73,9 @@ public class PermissionController {
 
     @GetMapping("/view")
     @PreAuthorize("hasAuthority('MANAGE_PERMISSIONS')")
-    public String viewPermissions(Model model) {
+    public String viewPermissions(Model model, Authentication authentication) {
         model.addAttribute("permissions", permissionService.getAllPermissions());
-
+        model.addAttribute("userName", authentication.getName());
         return "permission/list";
     }
 

@@ -1,62 +1,49 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Permissions</title>
-
-    <link rel="stylesheet" th:href="@{/css/permission.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permisos</title>
+    <link rel="stylesheet" th:href="@{/css/user-list.css}">
     <link rel="stylesheet" th:href="@{/css/topbar.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
 </head>
-
 <body>
 
 <div class="page-wrapper">
 
-    <!-- TOPBAR -->
     <div th:replace="fragments/topbar :: topbar(${userName})"></div>
 
-    <!-- CONTENT -->
-    <main class="content">
+    <main>
+        <div class="user-list">
 
-        <!-- CREATE BUTTON -->
-        <div class="actions-bar">
-            <a th:href="@{/permission/create}" class="btn">+ New Permission</a>
-        </div>
+            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin:0;">Permisos</h2>
+                <a th:href="@{/permission/create}" class="btn-small">+ Nuevo permiso</a>
+            </div>
 
-        <!-- LIST -->
-        <section class="list">
-
-            <div class="row" th:each="permission : ${permissions}">
+            <div class="user-row" th:each="permission : ${permissions}">
 
                 <div class="info">
                     <strong th:text="${permission.name}"></strong>
                 </div>
 
                 <div class="actions">
-
-                    <!-- EDIT -->
-                    <a th:href="@{'/permission/edit/' + ${permission.id}}"
-                       class="btn-small">
-                        Edit
-                    </a>
-
-                    <!-- DELETE -->
-                    <form th:action="@{'/permission/delete/' + ${permission.id}}"
-                          method="post">
-
-                        <button class="danger"
-                                onclick="return confirm('Delete permission?')">
-                            Delete
-                        </button>
-
+                    <a th:href="@{'/permission/edit/' + ${permission.id}}" class="btn-small">Editar</a>
+                    <form th:action="@{'/permission/delete/' + ${permission.id}}" method="post">
+                        <button class="danger" onclick="return confirm('¿Eliminar permiso?')">Eliminar</button>
                     </form>
-
                 </div>
 
             </div>
 
-        </section>
+            <p th:if="${#lists.isEmpty(permissions)}" style="color:#888; padding:1rem;">
+                No hay permisos registrados.
+            </p>
 
+        </div>
     </main>
 
 </div>
