@@ -19,7 +19,7 @@
     <main>
         <section class="card">
 
-            <form th:action="${event.id == null ? '/event/create' : '/event/update/' + event.id}"
+            <form th:action="@{__${event.id == null ? '/event/create' : '/event/update/' + event.id}__}"
                   method="post" class="form">
 
                 <label>Nombre del evento</label>

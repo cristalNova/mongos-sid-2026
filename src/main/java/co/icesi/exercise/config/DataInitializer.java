@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+@org.springframework.context.annotation.Profile("!test")
 public class DataInitializer implements ApplicationRunner {
 
     @Autowired private RoleRepository roleRepository;

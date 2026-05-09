@@ -19,7 +19,7 @@
     <main>
         <section class="card">
 
-            <form th:action="${record.id == null ? '/progress/create' : '/progress/update/' + record.id}"
+            <form th:action="@{__${record.id == null ? '/progress/create' : '/progress/update/' + record.id}__}"
                   method="post" class="form">
 
                 <div th:if="${record.id == null}">

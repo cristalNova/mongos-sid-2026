@@ -19,7 +19,7 @@
     <main>
         <section class="card">
 
-            <form th:action="${exercise.id == null ? '/exercise/create' : '/exercise/update/' + exercise.id}"
+            <form th:action="@{__${exercise.id == null ? '/exercise/create' : '/exercise/update/' + exercise.id}__}"
                   method="post" class="form">
 
                 <label>Nombre del ejercicio</label>
