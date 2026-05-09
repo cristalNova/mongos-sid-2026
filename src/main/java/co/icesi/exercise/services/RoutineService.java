@@ -67,6 +67,25 @@ public class RoutineService {
         routineMongoRepository.delete(existing);
     }
 
+    public RoutineDocument adoptRoutine(String publicRoutineId, int newOwnerId) {
+        RoutineDocument original = getRoutineById(publicRoutineId);
+        AppUser newOwner = appUserRepository.findById(newOwnerId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + newOwnerId));
+
+        RoutineDocument copy = new RoutineDocument();
+        copy.setRoutineName(original.getRoutineName() + " (adoptada)");
+        copy.setVisibility(false);
+        copy.setType(original.getType());
+        copy.setDifficultyType(original.getDifficultyType());
+        copy.setOwnerId(newOwner.getId());
+        copy.setOwnerFirstName(newOwner.getFirstName());
+        copy.setOwnerLastName(newOwner.getLastName());
+        copy.setCreatedAt(new Date());
+        copy.setUpdatedAt(new Date());
+        copy.setExercises(new java.util.ArrayList<>(original.getExercises()));
+        return routineMongoRepository.save(copy);
+    }
+
     public RoutineDocument addExercise(String routineId, String exerciseId) {
         RoutineDocument routine = getRoutineById(routineId);
         ExerciseDocument exercise = exerciseMongoRepository.findById(exerciseId)

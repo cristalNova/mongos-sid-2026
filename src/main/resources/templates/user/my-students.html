@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis estudiantes</title>
+    <link rel="stylesheet" th:href="@{/css/user-list.css}">
+    <link rel="stylesheet" th:href="@{/css/topbar.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <div th:replace="fragments/topbar :: topbar(${userName})"></div>
+
+    <main>
+        <div class="user-list">
+
+            <div style="padding:1rem 0;">
+                <h2 style="margin:0;">Mis estudiantes asignados</h2>
+            </div>
+
+            <div class="user-row" th:each="student : ${students}">
+                <div class="info">
+                    <strong th:text="${student.firstName + ' ' + student.lastName}"></strong>
+                    <small th:text="${student.email}"></small>
+                    <small th:text="'Edad: ' + ${student.age} + ' · Peso: ' + ${student.weight} + ' kg · Altura: ' + ${student.height} + ' m'"></small>
+                </div>
+                <div class="actions">
+                    <a th:href="@{'/progress/student/' + ${student.id}}" class="btn-small">Ver progreso</a>
+                    <a th:href="@{'/recommendation/new?receiverId=' + ${student.id}}" class="btn-small"
+                       style="background:#5a3e8a; color:#fff;">Recomendar</a>
+                </div>
+            </div>
+
+            <p th:if="${#lists.isEmpty(students)}" style="color:#888; padding:1rem;">
+                No tienes estudiantes asignados.
+            </p>
+
+        </div>
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva recomendación</title>
+    <link rel="stylesheet" th:href="@{/css/user-detail.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <header class="topbar">
+        <h1>Nueva recomendación</h1>
+        <a th:href="@{/recommendation/sent}" class="btn-small">Volver</a>
+    </header>
+
+    <main>
+        <section class="card">
+            <form th:action="@{/recommendation/create}" method="post" class="form">
+
+                <label>Destinatario</label>
+                <select name="receiverId" required>
+                    <option value="" disabled selected>— Selecciona un usuario —</option>
+                    <option th:each="u : ${users}"
+                            th:value="${u.id}"
+                            th:text="${u.firstName + ' ' + u.lastName + ' (' + u.email + ')'}"
+                            th:selected="${receiverId != null and receiverId == u.id}"></option>
+                </select>
+
+                <label>Mensaje / Recomendación</label>
+                <textarea name="message" rows="5" required
+                          placeholder="Escribe aquí tu recomendación de entrenamiento..."></textarea>
+
+                <button type="submit" class="btn">Enviar recomendación</button>
+            </form>
+        </section>
+    </main>
+
+</div>
+
+</body>
+</html>

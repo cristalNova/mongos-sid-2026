@@ -103,4 +103,12 @@ public class RoutineController {
         routineService.removeExercise(id, index);
         return "redirect:/routine/" + id + "/exercises";
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/{id}/adopt")
+    public String adopt(@PathVariable String id, @AuthenticationPrincipal UserDetails userDetails) {
+        int userId = userService.getUserByEmail(userDetails.getUsername()).getId();
+        routineService.adoptRoutine(id, userId);
+        return "redirect:/routine/mine";
+    }
 }

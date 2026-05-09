@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Trainer Assignment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar entrenador</title>
     <link rel="stylesheet" th:href="@{/css/user-detail.css}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
 </head>
@@ -12,29 +13,42 @@
 <div class="page-wrapper">
 
     <header class="topbar">
-        <h1>Assign Trainer</h1>
-
-        <a th:href="@{/user/list}" class="btn-small">Back</a>
+        <h1>Asignar entrenador</h1>
+        <a th:href="@{/user/list}" class="btn-small">Volver</a>
     </header>
 
     <main>
-
         <section class="card">
 
             <h2 th:text="${user.firstName + ' ' + user.lastName}"></h2>
 
-            <form th:action="@{'/user/' + ${user.id} + '/trainer/assign'}"
-                  method="post">
+            <div th:if="${user.trainers != null and not #lists.isEmpty(user.trainers)}"
+                 style="margin-bottom:1rem;">
+                <strong>Entrenadores asignados:</strong>
+                <ul style="margin:0.5rem 0 0; padding-left:1.2rem;">
+                    <li th:each="t : ${user.trainers}"
+                        th:text="${t.firstName + ' ' + t.lastName + ' (' + t.email + ')'}"></li>
+                </ul>
+            </div>
 
-                <label>Trainer ID</label>
-                <input type="number" name="trainerId" required>
+            <form th:action="@{'/user/' + ${user.id} + '/trainer/assign'}" method="post" class="form">
 
-                <button class="btn">Assign</button>
+                <label>Seleccionar entrenador</label>
+                <select name="trainerId" required>
+                    <option value="" disabled selected>— Selecciona un entrenador —</option>
+                    <option th:each="t : ${trainers}"
+                            th:value="${t.id}"
+                            th:text="${t.firstName + ' ' + t.lastName + ' (' + t.email + ')'}"></option>
+                </select>
 
+                <p th:if="${#lists.isEmpty(trainers)}" style="color:#888;">
+                    No hay entrenadores registrados. Asigna el rol TRAINER a un usuario primero.
+                </p>
+
+                <button class="btn" th:disabled="${#lists.isEmpty(trainers)}">Asignar</button>
             </form>
 
         </section>
-
     </main>
 
 </div>

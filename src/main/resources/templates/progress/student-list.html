@@ -4,7 +4,8 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Mi progreso</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progreso del estudiante</title>
     <link rel="stylesheet" th:href="@{/css/user-list.css}">
     <link rel="stylesheet" th:href="@{/css/topbar.css}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
@@ -16,48 +17,38 @@
     <div th:replace="fragments/topbar :: topbar(${userName})"></div>
 
     <main>
-
         <div class="user-list">
 
-            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-                <h2 style="margin:0;">Mi progreso</h2>
+            <div style="padding:1rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2 style="margin:0;" th:text="'Progreso de ' + ${student.firstName + ' ' + student.lastName}"></h2>
+                    <small th:text="${student.email}" style="color:#888;"></small>
+                </div>
                 <div style="display:flex; gap:0.5rem;">
-                    <a th:href="@{/progress/stats}" class="btn-small">Estadísticas</a>
-                    <a th:href="@{/progress/export/pdf}" class="btn-small" style="background:#e74c3c; color:#fff;">Exportar PDF</a>
-                    <a th:href="@{/progress/new}" class="btn-small">+ Nuevo registro</a>
+                    <a th:href="@{'/recommendation/new?receiverId=' + ${student.id}}" class="btn-small"
+                       style="background:#5a3e8a; color:#fff;">Recomendar</a>
+                    <a th:href="@{/user/my-students}" class="btn-small">Volver</a>
                 </div>
             </div>
 
             <div class="user-row" th:each="record : ${records}">
-
                 <div class="info">
                     <strong th:text="${record.exerciseName != null ? record.exerciseName : '—'}"></strong>
                     <small th:text="'Rutina: ' + ${record.routineName}"></small>
                     <small th:text="${record.progressNotes}"></small>
                 </div>
-
                 <div class="roles">
                     <span class="chip" th:text="${record.date != null ? #dates.format(record.date,'dd/MM/yyyy') : '—'}"></span>
                     <span class="chip" th:text="${record.series + ' series × ' + record.repetitions + ' reps'}"></span>
-                    <span class="chip" th:if="${record.weight != null}"
-                          th:text="${record.weight + ' kg'}"></span>
+                    <span class="chip" th:if="${record.weight != null}" th:text="${record.weight + ' kg'}"></span>
                 </div>
-
-                <div class="actions">
-                    <a th:href="@{'/progress/edit/' + ${record.id}}" class="btn-small">Editar</a>
-                    <form th:action="@{'/progress/delete/' + ${record.id}}" method="post">
-                        <button class="danger" onclick="return confirm('¿Eliminar registro?')">Eliminar</button>
-                    </form>
-                </div>
-
             </div>
 
             <p th:if="${#lists.isEmpty(records)}" style="color:#888; padding:1rem;">
-                No tienes registros de progreso.
+                Este estudiante no tiene registros de progreso.
             </p>
 
         </div>
-
     </main>
 
 </div>

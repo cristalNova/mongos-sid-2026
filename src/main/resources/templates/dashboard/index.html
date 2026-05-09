@@ -125,6 +125,21 @@
                 <p>Registra y revisa tu historial de series, repeticiones y métricas.</p>
             </a>
 
+            <a th:href="@{/progress/stats}" class="dashboard-card">
+                <h3>Estadísticas</h3>
+                <p>Gráficos semanales/mensuales de repeticiones y peso por sesión.</p>
+            </a>
+
+            <a th:href="@{/recommendation/list}" class="dashboard-card">
+                <h3>Recomendaciones</h3>
+                <p>Consulta las recomendaciones de entrenamiento de tus entrenadores.</p>
+            </a>
+
+            <a sec:authorize="hasAuthority('VIEW_USERS')" th:href="@{/user/my-students}" class="dashboard-card">
+                <h3>Mis estudiantes</h3>
+                <p>Visualiza el progreso y rutinas de los estudiantes a tu cargo.</p>
+            </a>
+
             <a sec:authorize="hasAuthority('VIEW_USERS')" th:href="@{/user/list}" class="dashboard-card">
                 <h3>Usuarios</h3>
                 <p>Gestiona los usuarios registrados en el sistema.</p>

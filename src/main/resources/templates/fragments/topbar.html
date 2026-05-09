@@ -21,6 +21,13 @@
 
         <a th:href="@{/progress/list}" class="tab">Mi progreso</a>
 
+        <a th:href="@{/progress/stats}" class="tab">Estadísticas</a>
+
+        <a th:href="@{/recommendation/list}" class="tab">Recomendaciones</a>
+
+        <a sec:authorize="hasAuthority('VIEW_USERS')"
+           th:href="@{/user/my-students}" class="tab">Mis estudiantes</a>
+
         <a sec:authorize="hasAuthority('MANAGE_ROLES')"
            th:href="@{/role/view}" class="tab">Roles</a>
 

@@ -141,6 +141,7 @@ public class UserController {
     public String trainerPage(@PathVariable int id, Model model) {
 
         model.addAttribute("user", userService.getAppUserById(id));
+        model.addAttribute("trainers", userService.getUsersByRoleId(roleService.getRoleByName("TRAINER").getId()));
 
         return "user/trainer";
     }
@@ -152,5 +153,14 @@ public class UserController {
         userService.assignTrainerToUser(id, trainerId);
 
         return "redirect:/user/" + id + "/trainer";
+    }
+
+    @GetMapping("/my-students")
+    @PreAuthorize("hasAuthority('VIEW_USERS')")
+    public String myStudents(Model model, Authentication authentication) {
+        int trainerId = userService.getUserByEmail(authentication.getName()).getId();
+        model.addAttribute("students", userService.getUsersByTrainerId(trainerId));
+        model.addAttribute("userName", authentication.getName());
+        return "user/my-students";
     }
 }

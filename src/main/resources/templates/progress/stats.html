@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas de rendimiento</title>
+    <link rel="stylesheet" th:href="@{/css/user-list.css}">
+    <link rel="stylesheet" th:href="@{/css/topbar.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+    <style>
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; padding: 1rem 0; }
+        .stat-card { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .stat-card h3 { margin: 0 0 1rem; font-size: 1rem; color: #555; }
+        .chart-container { position: relative; height: 280px; }
+        .summary-boxes { display: flex; gap: 1rem; padding: 1rem 0; flex-wrap: wrap; }
+        .summary-box { background:#5a3e8a; color:#fff; border-radius:10px; padding:1rem 1.5rem; flex:1; min-width:140px; text-align:center; }
+        .summary-box .value { font-size: 2rem; font-weight: bold; }
+        .summary-box .label { font-size: 0.8rem; opacity: 0.85; margin-top: 4px; }
+        @media (max-width: 700px) { .stats-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <div th:replace="fragments/topbar :: topbar(${userName})"></div>
+
+    <main style="padding: 1rem 2rem;">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h2 style="margin:0;">Estadísticas de rendimiento</h2>
+            <div style="display:flex; gap:0.5rem;">
+                <a th:href="@{/progress/export/pdf}" class="btn-small"
+                   style="background:#e74c3c; color:#fff;">Descargar PDF</a>
+                <a th:href="@{/progress/list}" class="btn-small">Ver historial</a>
+            </div>
+        </div>
+
+        <!-- Summary boxes -->
+        <div class="summary-boxes">
+            <div class="summary-box">
+                <div class="value" th:text="${totalRecords}">0</div>
+                <div class="label">Registros totales</div>
+            </div>
+            <div class="summary-box" th:with="totalReps=${#aggregates.sum(records.![repetitions != null ? repetitions : 0])}">
+                <div class="value" th:text="${totalReps != null ? totalReps : 0}">0</div>
+                <div class="label">Repeticiones totales</div>
+            </div>
+            <div class="summary-box" th:with="totalSeries=${#aggregates.sum(records.![series != null ? series : 0])}">
+                <div class="value" th:text="${totalSeries != null ? totalSeries : 0}">0</div>
+                <div class="label">Series totales</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Repeticiones por sesión</h3>
+                <div class="chart-container">
+                    <canvas id="repsChart"></canvas>
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3>Peso levantado (kg) por sesión</h3>
+                <div class="chart-container">
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <p th:if="${#lists.isEmpty(records)}" style="color:#888; padding:1rem;">
+            No tienes registros de progreso aún. <a th:href="@{/progress/new}">Registra tu primer entrenamiento.</a>
+        </p>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const labels      = /*[[${labels}]]*/ [];
+    const repsData    = /*[[${repsData}]]*/ [];
+    const weightData  = /*[[${weightData}]]*/ [];
+
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { ticks: { maxRotation: 45 } },
+            y: { beginAtZero: true }
+        }
+    };
+
+    new Chart(document.getElementById('repsChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Repeticiones',
+                data: repsData,
+                borderColor: '#5a3e8a',
+                backgroundColor: 'rgba(90,62,138,0.1)',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: commonOptions
+    });
+
+    new Chart(document.getElementById('weightChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Peso (kg)',
+                data: weightData,
+                backgroundColor: 'rgba(175,147,214,0.7)',
+                borderColor: '#5a3e8a',
+                borderWidth: 1
+            }]
+        },
+        options: commonOptions
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>

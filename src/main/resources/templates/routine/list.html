@@ -46,6 +46,11 @@
                 <div class="actions">
                     <a th:href="@{'/routine/' + ${routine.id} + '/exercises'}" class="btn-small">Ejercicios</a>
                     <a th:href="@{'/routine/edit/' + ${routine.id}}" class="btn-small">Editar</a>
+                    <form th:if="${routine.visibility}" th:action="@{'/routine/' + ${routine.id} + '/adopt'}" method="post"
+                          style="display:inline;">
+                        <button class="btn-small" style="background:#5a3e8a; color:#fff;"
+                                onclick="return confirm('¿Adoptar esta rutina a tus rutinas personales?')">Adoptar</button>
+                    </form>
                     <form th:action="@{'/routine/delete/' + ${routine.id}}" method="post">
                         <button class="danger" onclick="return confirm('¿Eliminar rutina?')">Eliminar</button>
                     </form>

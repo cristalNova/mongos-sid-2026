@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis recomendaciones</title>
+    <link rel="stylesheet" th:href="@{/css/user-list.css}">
+    <link rel="stylesheet" th:href="@{/css/topbar.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <div th:replace="fragments/topbar :: topbar(${userName})"></div>
+
+    <main>
+        <div class="user-list">
+
+            <div style="padding:1rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin:0;">Recomendaciones recibidas</h2>
+                <a sec:authorize="hasAuthority('VIEW_USERS')"
+                   th:href="@{/recommendation/sent}" class="btn-small">Ver enviadas</a>
+            </div>
+
+            <div class="user-row" th:each="rec : ${recommendations}">
+                <div class="info">
+                    <strong th:text="${rec.message}"></strong>
+                    <small th:text="'De: ' + ${rec.sender.firstName + ' ' + rec.sender.lastName}"></small>
+                    <small th:text="${rec.date != null ? #dates.format(rec.date,'dd/MM/yyyy') : ''}"></small>
+                </div>
+            </div>
+
+            <p th:if="${#lists.isEmpty(recommendations)}" style="color:#888; padding:1rem;">
+                No tienes recomendaciones recibidas.
+            </p>
+
+        </div>
+    </main>
+
+</div>
+
+</body>
+</html>
