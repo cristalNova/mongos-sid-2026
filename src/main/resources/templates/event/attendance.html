@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistencia</title>
+    <link rel="stylesheet" th:href="@{/css/user-list.css}">
+    <link rel="stylesheet" th:href="@{/css/topbar.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <div th:replace="fragments/topbar :: topbar(${userName})"></div>
+
+    <main>
+        <div class="user-list">
+
+            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2 style="margin:0;" th:text="${event.name}">Evento</h2>
+                    <small th:text="${event.date != null ? #dates.format(event.date, 'dd/MM/yyyy') : ''}"></small>
+                </div>
+                <a th:href="@{/event/list}" class="btn-small">Volver</a>
+            </div>
+
+            <p th:if="${#lists.isEmpty(event.subscriptions)}" style="color:#888; padding:1rem;">
+                Este evento no tiene inscritos aún.
+            </p>
+
+            <div class="user-row" th:each="sub : ${event.subscriptions}">
+
+                <div class="info">
+                    <strong th:text="${sub.userFirstName + ' ' + sub.userLastName}"></strong>
+                </div>
+
+                <div class="roles">
+                    <span class="chip"
+                          th:text="${sub.attendance ? '✓ Asistió' : 'No marcado'}"
+                          th:style="${sub.attendance ? 'background:#d4edda; color:#155724;' : 'background:#f8d7da; color:#721c24;'}"></span>
+                </div>
+
+                <div class="actions">
+                    <form th:if="${!sub.attendance}"
+                          th:action="@{'/event/' + ${event.id} + '/attendance'}" method="post">
+                        <input type="hidden" name="userId" th:value="${sub.userId}">
+                        <input type="hidden" name="attended" value="true">
+                        <button class="btn-small" style="background:#28a745; color:#fff;">Marcar asistencia</button>
+                    </form>
+                    <form th:if="${sub.attendance}"
+                          th:action="@{'/event/' + ${event.id} + '/attendance'}" method="post">
+                        <input type="hidden" name="userId" th:value="${sub.userId}">
+                        <input type="hidden" name="attended" value="false">
+                        <button class="btn-small" style="background:#6c757d; color:#fff;">Quitar asistencia</button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+</body>
+</html>

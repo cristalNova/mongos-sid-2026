@@ -98,11 +98,20 @@ public class EventController {
     }
 
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
+    @GetMapping("/{id}/attendance")
+    public String attendancePage(@PathVariable String id, Model model,
+                                 @AuthenticationPrincipal UserDetails userDetails) {
+        model.addAttribute("event", eventService.getEventById(id));
+        model.addAttribute("userName", userDetails.getUsername());
+        return "event/attendance";
+    }
+
+    @PreAuthorize("hasAuthority('MANAGE_USERS')")
     @PostMapping("/{id}/attendance")
     public String markAttendance(@PathVariable String id,
                                  @RequestParam int userId,
                                  @RequestParam boolean attended) {
         eventService.markAttendance(id, userId, attended);
-        return "redirect:/event/list";
+        return "redirect:/event/" + id + "/attendance";
     }
 }

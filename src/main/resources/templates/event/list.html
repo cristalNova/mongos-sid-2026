@@ -55,6 +55,11 @@
                     </form>
 
                     <a sec:authorize="hasAuthority('MANAGE_USERS')"
+                       th:if="${!#lists.isEmpty(event.subscriptions)}"
+                       th:href="@{'/event/' + ${event.id} + '/attendance'}"
+                       class="btn-small" style="background:#5a3e8a; color:#fff;">Asistencia</a>
+
+                    <a sec:authorize="hasAuthority('MANAGE_USERS')"
                        th:href="@{'/event/edit/' + ${event.id}}" class="btn-small">Editar</a>
 
                     <form sec:authorize="hasAuthority('MANAGE_USERS')"
