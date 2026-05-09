@@ -4,12 +4,14 @@ Aplicación web para la gestión de rutinas de entrenamiento, seguimiento de pro
 
 ## Integrantes
 
-| Nombre | Código |
-|--------|--------|
-| Juan Pablo Serrano | A00404067 |
-| Felipe Calderón | A00404998 |
-| Samuel Navia | A00405006 |
+| Nombre                | Código    |
+|-----------------------|-----------|
+| Juan Pablo Serrano    | A00404067 |
+| Felipe Calderón       | A00404998 |
+| Samuel Navia          | A00405006 |
 | Maria Cristina Angulo | A00404027 |
+| Samuel Jose Rengifo   | A00404150 |
+
 
 ---
 
