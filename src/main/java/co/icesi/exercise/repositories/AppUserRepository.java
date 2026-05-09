@@ -25,6 +25,9 @@ public interface AppUserRepository extends JpaRepository<AppUser, Integer> {
     @EntityGraph(attributePaths = {"roles"})
     Optional<AppUser> findWithRolesByEmail(String email);
 
+    @EntityGraph(attributePaths = {"roles"})
+    Optional<AppUser> findWithRolesById(Integer id);
+
     @EntityGraph(attributePaths = {"trainers"})
     Optional<AppUser> findWithTrainersById(Integer id);
 }

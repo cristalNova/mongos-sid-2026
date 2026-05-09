@@ -30,6 +30,11 @@ public class UserService {
         return appUserRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
     }
 
+    public AppUser getAppUserWithRoles(int id) {
+        return appUserRepository.findWithRolesById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
+    }
+
     public AppUser getAppUserWithTrainers(int id) {
         return appUserRepository.findWithTrainersById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
@@ -123,6 +128,13 @@ public class UserService {
             user.getTrainers().add(trainer);
         }
 
+        return appUserRepository.save(user);
+    }
+
+    @Transactional
+    public AppUser removeTrainerFromUser(int userId, int trainerId) {
+        AppUser user = getAppUserWithTrainers(userId);
+        user.getTrainers().removeIf(t -> t.getId() == trainerId);
         return appUserRepository.save(user);
     }
 

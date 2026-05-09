@@ -111,7 +111,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('MANAGE_ROLES')")
     public String manageRoles(@PathVariable int id, Model model) {
 
-        model.addAttribute("user", userService.getAppUserById(id));
+        model.addAttribute("user", userService.getAppUserWithRoles(id));
         model.addAttribute("roles", roleService.getAllRoles());
 
         return "user/roles";
@@ -151,6 +151,15 @@ public class UserController {
     public String assignTrainer(@PathVariable int id, @RequestParam int trainerId) {
 
         userService.assignTrainerToUser(id, trainerId);
+
+        return "redirect:/user/" + id + "/trainer";
+    }
+
+    @PostMapping("/{id}/trainer/remove")
+    @PreAuthorize("hasAuthority('ASSIGN_TRAINER')")
+    public String removeTrainer(@PathVariable int id, @RequestParam int trainerId) {
+
+        userService.removeTrainerFromUser(id, trainerId);
 
         return "redirect:/user/" + id + "/trainer";
     }

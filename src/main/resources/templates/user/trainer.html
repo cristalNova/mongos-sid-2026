@@ -23,12 +23,17 @@
             <h2 th:text="${user.firstName + ' ' + user.lastName}"></h2>
 
             <div th:if="${user.trainers != null and not #lists.isEmpty(user.trainers)}"
-                 style="margin-bottom:1rem;">
+                 style="margin-bottom:1.5rem;">
                 <strong>Entrenadores asignados:</strong>
-                <ul style="margin:0.5rem 0 0; padding-left:1.2rem;">
-                    <li th:each="t : ${user.trainers}"
-                        th:text="${t.firstName + ' ' + t.lastName + ' (' + t.email + ')'}"></li>
-                </ul>
+                <div th:each="t : ${user.trainers}"
+                     style="display:flex; align-items:center; justify-content:space-between; padding:0.4rem 0; border-bottom:1px solid #eee;">
+                    <span th:text="${t.firstName + ' ' + t.lastName + ' (' + t.email + ')'}"></span>
+                    <form th:action="@{'/user/' + ${user.id} + '/trainer/remove'}" method="post" style="margin:0;">
+                        <input type="hidden" name="trainerId" th:value="${t.id}">
+                        <button class="danger" style="padding:0.2rem 0.6rem; font-size:0.8rem;"
+                                onclick="return confirm('¿Retirar entrenador?')">Retirar</button>
+                    </form>
+                </div>
             </div>
 
             <form th:action="@{'/user/' + ${user.id} + '/trainer/assign'}" method="post" class="form">
