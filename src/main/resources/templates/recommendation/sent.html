@@ -19,9 +19,9 @@
     <main>
         <div class="user-list">
 
-            <div style="padding:1rem 0; display:flex; justify-content:space-between; align-items:center; gap:1rem;">
-                <h2 style="margin:0;">Recomendaciones enviadas</h2>
-                <div style="display:flex; gap:0.5rem;">
+            <div class="list-header">
+                <h2>Recomendaciones enviadas</h2>
+                <div class="list-actions">
                     <a th:href="@{/recommendation/list}" class="btn-small">Ver recibidas</a>
                     <a th:href="@{/recommendation/new}" class="btn-small">+ Nueva</a>
                 </div>
@@ -35,14 +35,17 @@
                 </div>
                 <div class="actions">
                     <form th:action="@{'/recommendation/delete/' + ${rec.id}}" method="post">
-                        <button class="danger" onclick="return confirm('¿Eliminar recomendación?')">Eliminar</button>
+                        <button type="button" class="danger"
+                                data-confirm="¿Eliminar esta recomendación?">
+                            Eliminar
+                        </button>
                     </form>
                 </div>
             </div>
 
-            <p th:if="${#lists.isEmpty(recommendations)}" style="color:#888; padding:1rem;">
-                No has enviado recomendaciones.
-            </p>
+            <div th:if="${#lists.isEmpty(recommendations)}"
+                 th:replace="fragments/empty-state :: empty('No has enviado recomendaciones.', 'Crea una desde + Nueva.')">
+            </div>
 
         </div>
     </main>

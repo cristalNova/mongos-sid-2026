@@ -1,0 +1,38 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Fragmento de migas de pan (breadcrumb).
+  Parámetros:
+    parent    — texto del nivel anterior  (ej: "Rutinas")
+    parentUrl — URL del nivel anterior    (ej: "/routine/mine")
+    current   — texto de la página actual (ej: "Editar rutina")
+
+  Uso:
+    <div th:replace="fragments/breadcrumb :: breadcrumb('Rutinas', '/routine/mine', 'Editar rutina')"></div>
+
+  Solo nivel Dashboard > parent > current.
+  Para páginas de primer nivel (solo Dashboard > current) pasar parentUrl=null:
+    <div th:replace="fragments/breadcrumb :: breadcrumb(null, null, 'Ejercicios')"></div>
+-->
+<nav th:fragment="breadcrumb(parent, parentUrl, current)"
+     class="breadcrumb" aria-label="Ruta de navegación">
+
+    <a th:href="@{/user}">Dashboard</a>
+
+    <th:block th:if="${parent != null}">
+        <span class="separator">›</span>
+        <a th:if="${parentUrl != null}" th:href="${parentUrl}" th:text="${parent}"></a>
+        <span th:if="${parentUrl == null}" class="current" th:text="${parent}"></span>
+    </th:block>
+
+    <th:block th:if="${current != null}">
+        <span class="separator">›</span>
+        <span class="current" th:text="${current}"></span>
+    </th:block>
+
+</nav>
+
+</body>
+</html>

@@ -18,11 +18,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.awt.Color;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/progress")
@@ -37,9 +42,20 @@ public class ProgressRecordController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
-    public String list(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+    public String list(Model model,
+                       @AuthenticationPrincipal UserDetails userDetails,
+                       @RequestParam(required = false) String q) {
         int userId = userService.getUserByEmail(userDetails.getUsername()).getId();
-        model.addAttribute("records", progressRecordService.getProgressRecordsByUserId(userId));
+        var records = progressRecordService.getProgressRecordsByUserId(userId);
+        if (q != null && !q.isBlank()) {
+            String lower = q.toLowerCase();
+            records = records.stream()
+                    .filter(r -> (r.getExerciseName() != null && r.getExerciseName().toLowerCase().contains(lower))
+                              || (r.getRoutineName() != null && r.getRoutineName().toLowerCase().contains(lower)))
+                    .toList();
+        }
+        model.addAttribute("records", records);
+        model.addAttribute("q", q);
         model.addAttribute("userName", userDetails.getUsername());
         return "progress/list";
     }
@@ -58,9 +74,11 @@ public class ProgressRecordController {
     @PostMapping("/create")
     public String create(@ModelAttribute ProgressRecordDocument record,
                          @RequestParam String routineId,
-                         @AuthenticationPrincipal UserDetails userDetails) {
+                         @AuthenticationPrincipal UserDetails userDetails,
+                         RedirectAttributes ra) {
         int userId = userService.getUserByEmail(userDetails.getUsername()).getId();
         progressRecordService.createProgressRecord(record, userId, routineId);
+        ra.addFlashAttribute("flashSuccess", "Registro de progreso creado correctamente.");
         return "redirect:/progress/list";
     }
 
@@ -77,15 +95,18 @@ public class ProgressRecordController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/{id}")
-    public String update(@PathVariable String id, @ModelAttribute ProgressRecordDocument record) {
+    public String update(@PathVariable String id, @ModelAttribute ProgressRecordDocument record,
+                         RedirectAttributes ra) {
         progressRecordService.updateProgressRecord(id, record);
+        ra.addFlashAttribute("flashSuccess", "Registro de progreso actualizado.");
         return "redirect:/progress/list";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable String id) {
+    public String delete(@PathVariable String id, RedirectAttributes ra) {
         progressRecordService.deleteProgressRecord(id);
+        ra.addFlashAttribute("flashSuccess", "Registro de progreso eliminado.");
         return "redirect:/progress/list";
     }
 
@@ -126,11 +147,73 @@ public class ProgressRecordController {
         repsData.append("]");
         weightData.append("]");
 
+        // Series data JSON
+        StringBuilder seriesData = new StringBuilder("[");
+        for (int i = 0; i < records.size(); i++) {
+            if (i > 0) seriesData.append(",");
+            seriesData.append(records.get(i).getSeries() != null ? records.get(i).getSeries() : 0);
+        }
+        seriesData.append("]");
+
+        // Averages
+        double avgReps = records.stream()
+                .filter(r -> r.getRepetitions() != null)
+                .mapToInt(ProgressRecordDocument::getRepetitions)
+                .average().orElse(0);
+        double avgWeight = records.stream()
+                .filter(r -> r.getWeight() != null)
+                .mapToDouble(ProgressRecordDocument::getWeight)
+                .average().orElse(0);
+
+        // Exercise sparklines: group by exerciseName, compute SVG polyline points
+        Map<String, List<Integer>> sparksMap = records.stream()
+                .filter(r -> r.getExerciseName() != null && r.getRepetitions() != null)
+                .collect(Collectors.groupingBy(
+                        ProgressRecordDocument::getExerciseName,
+                        LinkedHashMap::new,
+                        Collectors.mapping(ProgressRecordDocument::getRepetitions, Collectors.toList())));
+
+        List<Map<String, Object>> exerciseSparks = new ArrayList<>();
+        for (Map.Entry<String, List<Integer>> entry : sparksMap.entrySet()) {
+            List<Integer> vals = entry.getValue();
+            int maxVal = vals.stream().mapToInt(Integer::intValue).max().orElse(1);
+            if (maxVal == 0) maxVal = 1;
+            int n = vals.size();
+            StringBuilder pts = new StringBuilder();
+            for (int i = 0; i < n; i++) {
+                double x = n == 1 ? 40.0 : (i * 80.0 / (n - 1));
+                double y = 28.0 - (vals.get(i) * 28.0 / maxVal);
+                if (i > 0) pts.append(" ");
+                pts.append(String.format("%.1f,%.1f", x, y));
+            }
+            double avg = vals.stream().mapToInt(Integer::intValue).average().orElse(0);
+            Map<String, Object> spark = new LinkedHashMap<>();
+            spark.put("name", entry.getKey());
+            spark.put("points", pts.toString());
+            spark.put("count", n);
+            spark.put("avgReps", Math.round(avg));
+            spark.put("maxReps", maxVal);
+            exerciseSparks.add(spark);
+        }
+
+        long totalReps = records.stream()
+                .filter(r -> r.getRepetitions() != null)
+                .mapToLong(ProgressRecordDocument::getRepetitions).sum();
+        long totalSeries = records.stream()
+                .filter(r -> r.getSeries() != null)
+                .mapToLong(ProgressRecordDocument::getSeries).sum();
+
         model.addAttribute("records", records);
         model.addAttribute("labels", labels.toString());
         model.addAttribute("repsData", repsData.toString());
         model.addAttribute("weightData", weightData.toString());
+        model.addAttribute("seriesData", seriesData.toString());
         model.addAttribute("totalRecords", records.size());
+        model.addAttribute("totalReps", totalReps);
+        model.addAttribute("totalSeries", totalSeries);
+        model.addAttribute("avgReps", Math.round(avgReps));
+        model.addAttribute("avgWeight", String.format("%.1f", avgWeight));
+        model.addAttribute("exerciseSparks", exerciseSparks);
         model.addAttribute("userName", userDetails.getUsername());
         return "progress/stats";
     }

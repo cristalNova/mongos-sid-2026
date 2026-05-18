@@ -19,11 +19,26 @@
 
         <div class="user-list">
 
-            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center;">
-                <h2 style="margin:0;">Ejercicios</h2>
+            <div class="list-header">
+                <h2>Ejercicios</h2>
                 <a sec:authorize="hasAuthority('MANAGE_USERS')"
                    th:href="@{/exercise/new}" class="btn-small">+ Nuevo ejercicio</a>
             </div>
+
+            <form class="search-bar" method="get" th:action="@{/exercise/list}">
+                <input type="search" name="q" th:value="${q}" placeholder="Buscar por nombre…" autocomplete="off">
+                <button type="submit">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    Buscar
+                </button>
+                <a th:if="${q != null and !#strings.isEmpty(q)}" th:href="@{/exercise/list}" class="clear-search">Limpiar</a>
+            </form>
+
+            <p th:if="${q != null and !#strings.isEmpty(q)}" class="search-results-info"
+               th:text="'Resultados para: «' + ${q} + '»  (' + ${#lists.size(exercises)} + ' encontrados)'"></p>
 
             <div class="user-row" th:each="exercise : ${exercises}">
 
@@ -46,15 +61,18 @@
 
                     <form sec:authorize="hasAuthority('MANAGE_USERS')"
                           th:action="@{'/exercise/delete/' + ${exercise.id}}" method="post">
-                        <button class="danger" onclick="return confirm('¿Eliminar ejercicio?')">Eliminar</button>
+                        <button type="button" class="danger"
+                                data-confirm="¿Eliminar este ejercicio? Esta acción no se puede deshacer.">
+                            Eliminar
+                        </button>
                     </form>
                 </div>
 
             </div>
 
-            <p th:if="${#lists.isEmpty(exercises)}" style="color:#888; padding:1rem;">
-                No hay ejercicios registrados.
-            </p>
+            <div th:if="${#lists.isEmpty(exercises)}"
+                 th:replace="fragments/empty-state :: empty('No hay ejercicios registrados.', 'Crea el primero usando el botón de arriba.')">
+            </div>
 
         </div>
 

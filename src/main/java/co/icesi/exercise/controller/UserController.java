@@ -2,7 +2,10 @@ package co.icesi.exercise.controller;
 
 import co.icesi.exercise.dto.AppUserDTO;
 import co.icesi.exercise.model.AppUser;
+import co.icesi.exercise.services.EventService;
+import co.icesi.exercise.services.ExerciseService;
 import co.icesi.exercise.services.RoleService;
+import co.icesi.exercise.services.RoutineService;
 import co.icesi.exercise.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 
@@ -27,17 +31,39 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ExerciseService exerciseService;
+
+    @Autowired
+    private RoutineService routineService;
+
+    @Autowired
+    private EventService eventService;
+
     @GetMapping
     public String dashboard(Authentication authentication, Model model) {
         model.addAttribute("userName", authentication.getName());
+        model.addAttribute("exerciseCount", exerciseService.getAllExercises().size());
+        model.addAttribute("routineCount", routineService.getPublicRoutines().size());
+        model.addAttribute("eventCount", eventService.getAllEvents().size());
+        model.addAttribute("userCount", userService.getAllAppUsers().size());
         return "dashboard/index";
     }
 
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('VIEW_USERS')")
-    public String listUsers(Model model, Authentication authentication) {
-
-        model.addAttribute("users", userService.getAllAppUsers());
+    public String listUsers(Model model, Authentication authentication,
+                            @RequestParam(required = false) String q) {
+        var users = (q != null && !q.isBlank())
+                ? userService.getAllAppUsers().stream()
+                    .filter(u -> {
+                        String full = (u.getFirstName() + " " + u.getLastName() + " " + u.getEmail()).toLowerCase();
+                        return full.contains(q.toLowerCase());
+                    })
+                    .toList()
+                : userService.getAllAppUsers();
+        model.addAttribute("users", users);
+        model.addAttribute("q", q);
         model.addAttribute("userName", authentication.getName());
 
         return "user/list";
@@ -79,7 +105,8 @@ public class UserController {
 
     @PostMapping("/update/{id}")
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
-    public String updateUser(@PathVariable int id, @ModelAttribute AppUserDTO dto) {
+    public String updateUser(@PathVariable int id, @ModelAttribute AppUserDTO dto,
+                             RedirectAttributes ra) {
 
         AppUser user = new AppUser();
         user.setFirstName(dto.getFirstName());
@@ -95,6 +122,7 @@ public class UserController {
         user.setHeight(dto.getHeight());
 
         userService.updateAppUser(id, user, dto.getRoleIds());
+        ra.addFlashAttribute("flashSuccess", "Usuario actualizado correctamente.");
 
         return "redirect:/user/list";
     }
@@ -102,8 +130,9 @@ public class UserController {
 
     @PostMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
-    public String deleteUser(@PathVariable int id) {
+    public String deleteUser(@PathVariable int id, RedirectAttributes ra) {
         userService.deleteAppUserById(id);
+        ra.addFlashAttribute("flashSuccess", "Usuario eliminado.");
         return "redirect:/user/list";
     }
 
@@ -119,18 +148,20 @@ public class UserController {
 
     @PostMapping("/{id}/roles/add")
     @PreAuthorize("hasAuthority('MANAGE_ROLES')")
-    public String addRole(@PathVariable int id, @RequestParam int roleId) {
+    public String addRole(@PathVariable int id, @RequestParam int roleId, RedirectAttributes ra) {
 
         userService.assignRoleToUser(id, roleId);
+        ra.addFlashAttribute("flashSuccess", "Rol asignado al usuario.");
 
         return "redirect:/user/" + id + "/roles";
     }
 
     @PostMapping("/{id}/roles/remove")
     @PreAuthorize("hasAuthority('MANAGE_ROLES')")
-    public String removeRole(@PathVariable int id, @RequestParam int roleId) {
+    public String removeRole(@PathVariable int id, @RequestParam int roleId, RedirectAttributes ra) {
 
         userService.removeRoleFromUser(id, roleId);
+        ra.addFlashAttribute("flashSuccess", "Rol removido del usuario.");
 
         return "redirect:/user/" + id + "/roles";
     }
@@ -148,18 +179,22 @@ public class UserController {
 
     @PostMapping("/{id}/trainer/assign")
     @PreAuthorize("hasAuthority('ASSIGN_TRAINER')")
-    public String assignTrainer(@PathVariable int id, @RequestParam int trainerId) {
+    public String assignTrainer(@PathVariable int id, @RequestParam int trainerId,
+                                RedirectAttributes ra) {
 
         userService.assignTrainerToUser(id, trainerId);
+        ra.addFlashAttribute("flashSuccess", "Entrenador asignado correctamente.");
 
         return "redirect:/user/" + id + "/trainer";
     }
 
     @PostMapping("/{id}/trainer/remove")
     @PreAuthorize("hasAuthority('ASSIGN_TRAINER')")
-    public String removeTrainer(@PathVariable int id, @RequestParam int trainerId) {
+    public String removeTrainer(@PathVariable int id, @RequestParam int trainerId,
+                                RedirectAttributes ra) {
 
         userService.removeTrainerFromUser(id, trainerId);
+        ra.addFlashAttribute("flashSuccess", "Entrenador removido.");
 
         return "redirect:/user/" + id + "/trainer";
     }

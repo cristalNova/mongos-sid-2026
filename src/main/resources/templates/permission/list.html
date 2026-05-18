@@ -19,8 +19,8 @@
     <main>
         <div class="user-list">
 
-            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center;">
-                <h2 style="margin:0;">Permisos</h2>
+            <div class="list-header">
+                <h2>Permisos</h2>
                 <a th:href="@{/permission/create}" class="btn-small">+ Nuevo permiso</a>
             </div>
 
@@ -33,15 +33,18 @@
                 <div class="actions">
                     <a th:href="@{'/permission/edit/' + ${permission.id}}" class="btn-small">Editar</a>
                     <form th:action="@{'/permission/delete/' + ${permission.id}}" method="post">
-                        <button class="danger" onclick="return confirm('¿Eliminar permiso?')">Eliminar</button>
+                        <button type="button" class="danger"
+                                data-confirm="¿Eliminar este permiso? Esta acción no se puede deshacer.">
+                            Eliminar
+                        </button>
                     </form>
                 </div>
 
             </div>
 
-            <p th:if="${#lists.isEmpty(permissions)}" style="color:#888; padding:1rem;">
-                No hay permisos registrados.
-            </p>
+            <div th:if="${#lists.isEmpty(permissions)}"
+                 th:replace="fragments/empty-state :: empty('No hay permisos registrados.', null)">
+            </div>
 
         </div>
     </main>

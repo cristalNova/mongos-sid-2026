@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Permiso</title>
+    <title th:text="${permissionId == null ? 'Nuevo permiso' : 'Editar permiso'}">Permiso</title>
     <link rel="stylesheet" th:href="@{/css/user-detail.css}">
     <link rel="stylesheet" th:href="@{/css/topbar.css}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
@@ -15,27 +15,33 @@
     <div th:replace="fragments/topbar :: topbar(${userName})"></div>
 
     <main>
-        <section class="card" style="max-width:480px; margin:2rem auto;">
+        <section class="card card--form" style="max-width:480px; margin:2rem auto;">
 
             <h2 th:text="${permissionId == null ? 'Nuevo permiso' : 'Editar permiso'}">Permiso</h2>
 
             <form th:if="${permissionId == null}"
                   th:action="@{/permission/create}"
                   method="post" class="form">
-                <label>Nombre</label>
-                <input type="text" name="name" th:value="${permission.name}" required>
+                <div class="field">
+                    <input type="text" id="name-new" name="name"
+                           placeholder=" " th:value="${permission.name}" required>
+                    <label for="name-new">Nombre del permiso *</label>
+                </div>
                 <button class="btn">Crear permiso</button>
             </form>
 
             <form th:if="${permissionId != null}"
                   th:action="@{'/permission/update/' + ${permissionId}}"
                   method="post" class="form">
-                <label>Nombre</label>
-                <input type="text" name="name" th:value="${permission.name}" required>
+                <div class="field">
+                    <input type="text" id="name-edit" name="name"
+                           placeholder=" " th:value="${permission.name}" required>
+                    <label for="name-edit">Nombre del permiso *</label>
+                </div>
                 <button class="btn">Actualizar permiso</button>
             </form>
 
-            <a th:href="@{/permission/view}" class="btn-small" style="margin-top:1rem; display:inline-block;">Volver</a>
+            <a th:href="@{/permission/view}" class="btn-small" style="margin-top:1rem; display:inline-block;">← Volver</a>
 
         </section>
     </main>

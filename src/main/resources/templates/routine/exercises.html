@@ -19,23 +19,23 @@
         <section class="card">
 
             <h2>Ejercicios en esta rutina</h2>
-            <table style="width:100%; border-collapse:collapse;">
+            <table class="data-table">
                 <thead>
                     <tr>
-                        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ddd;">Nombre</th>
-                        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ddd;">Tipo</th>
-                        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ddd;">Dificultad</th>
-                        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ddd;">Duración</th>
-                        <th style="padding:0.5rem; border-bottom:1px solid #ddd;"></th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Dificultad</th>
+                        <th>Duración</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="ex, stat : ${routine.exercises}">
-                        <td style="padding:0.5rem;" th:text="${ex.exerciseName}"></td>
-                        <td style="padding:0.5rem;" th:text="${ex.type}"></td>
-                        <td style="padding:0.5rem;" th:text="${ex.difficultyType}"></td>
-                        <td style="padding:0.5rem;" th:text="${ex.duration != null ? ex.duration + ' min' : '—'}"></td>
-                        <td style="padding:0.5rem;">
+                        <td th:text="${ex.exerciseName}"></td>
+                        <td th:text="${ex.type}"></td>
+                        <td th:text="${ex.difficultyType}"></td>
+                        <td th:text="${ex.duration != null ? ex.duration + ' min' : '—'}"></td>
+                        <td>
                             <form th:action="@{'/routine/' + ${routine.id} + '/exercises/remove/' + ${stat.index}}"
                                   method="post">
                                 <button class="danger" onclick="return confirm('¿Quitar ejercicio?')">Quitar</button>
@@ -43,12 +43,12 @@
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(routine.exercises)}">
-                        <td colspan="5" style="padding:1rem; color:#888;">Sin ejercicios asignados.</td>
+                        <td colspan="5" class="empty-cell">Sin ejercicios asignados.</td>
                     </tr>
                 </tbody>
             </table>
 
-            <hr style="margin: 1.5rem 0;">
+            <hr class="data-table-divider">
 
             <h2>Agregar ejercicio</h2>
             <form th:action="@{'/routine/' + ${routine.id} + '/exercises/add'}"

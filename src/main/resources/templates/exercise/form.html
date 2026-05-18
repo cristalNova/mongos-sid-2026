@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicio</title>
+    <title th:text="${exercise.id == null ? 'Nuevo ejercicio' : 'Editar ejercicio'}">Ejercicio</title>
     <link rel="stylesheet" th:href="@{/css/user-detail.css}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
 </head>
@@ -13,29 +13,62 @@
 
     <header class="topbar">
         <h1 th:text="${exercise.id == null ? 'Nuevo ejercicio' : 'Editar ejercicio'}">Ejercicio</h1>
-        <a th:href="@{/exercise/list}" class="btn-small">Volver</a>
+        <a th:href="@{/exercise/list}" class="btn-small">← Volver</a>
     </header>
 
     <main>
-        <section class="card">
+        <section class="card card--form">
 
             <form th:action="@{__${exercise.id == null ? '/exercise/create' : '/exercise/update/' + exercise.id}__}"
                   method="post" class="form">
 
-                <label>Nombre del ejercicio</label>
-                <input type="text" name="exerciseName" th:value="${exercise.exerciseName}" required>
+                <div class="field">
+                    <input type="text" id="exerciseName" name="exerciseName"
+                           placeholder=" " th:value="${exercise.exerciseName}" required>
+                    <label for="exerciseName">Nombre del ejercicio *</label>
+                </div>
 
-                <label>Descripción</label>
-                <textarea name="description" rows="3" th:text="${exercise.description}"></textarea>
+                <div class="field field--textarea">
+                    <textarea id="description" name="description" rows="3"
+                              placeholder=" " maxlength="500" data-counter
+                              th:text="${exercise.description}"></textarea>
+                    <label for="description">Descripción</label>
+                    <span class="char-counter"></span>
+                </div>
 
-                <label>Tipo (ej: cardio, fuerza, movilidad)</label>
-                <input type="text" name="type" th:value="${exercise.type}">
+                <div class="field">
+                    <input type="text" id="type" name="type"
+                           placeholder=" " th:value="${exercise.type}"
+                           list="exercise-types" autocomplete="off">
+                    <label for="type">Tipo</label>
+                </div>
+                <datalist id="exercise-types">
+                    <option value="Cardio"/>
+                    <option value="Fuerza"/>
+                    <option value="Movilidad"/>
+                    <option value="Flexibilidad"/>
+                    <option value="HIIT"/>
+                    <option value="Resistencia"/>
+                    <option value="Equilibrio"/>
+                </datalist>
 
-                <label>Nivel de dificultad (ej: FÁCIL, MEDIO, DIFÍCIL)</label>
-                <input type="text" name="difficultyType" th:value="${exercise.difficultyType}">
+                <div class="field">
+                    <input type="text" id="difficultyType" name="difficultyType"
+                           placeholder=" " th:value="${exercise.difficultyType}"
+                           list="difficulty-levels" autocomplete="off">
+                    <label for="difficultyType">Nivel de dificultad</label>
+                </div>
+                <datalist id="difficulty-levels">
+                    <option value="FÁCIL"/>
+                    <option value="MEDIO"/>
+                    <option value="DIFÍCIL"/>
+                </datalist>
 
-                <label>Duración (minutos)</label>
-                <input type="number" step="0.1" name="duration" th:value="${exercise.duration}">
+                <div class="field">
+                    <input type="number" id="duration" name="duration"
+                           placeholder=" " step="0.1" th:value="${exercise.duration}">
+                    <label for="duration">Duración (minutos)</label>
+                </div>
 
                 <button type="submit" class="btn"
                         th:text="${exercise.id == null ? 'Crear ejercicio' : 'Actualizar ejercicio'}">Guardar</button>
@@ -45,6 +78,24 @@
     </main>
 
 </div>
+
+<script>
+(function () {
+    document.querySelectorAll('textarea[data-counter]').forEach(function (ta) {
+        var wrapper = ta.closest('.field--textarea');
+        var counter = wrapper ? wrapper.querySelector('.char-counter') : null;
+        if (!counter) return;
+        var max = ta.maxLength > 0 ? ta.maxLength : 500;
+        function update() {
+            var len = ta.value.length;
+            counter.textContent = len + ' / ' + max;
+            counter.classList.toggle('near-limit', len >= max * 0.9);
+        }
+        ta.addEventListener('input', update);
+        update();
+    });
+})();
+</script>
 
 </body>
 </html>

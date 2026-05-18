@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/exercise")
@@ -20,8 +21,17 @@ public class ExerciseController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
-    public String list(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        model.addAttribute("exercises", exerciseService.getAllExercises());
+    public String list(Model model,
+                       @AuthenticationPrincipal UserDetails userDetails,
+                       @RequestParam(required = false) String q) {
+        var exercises = (q != null && !q.isBlank())
+                ? exerciseService.getAllExercises().stream()
+                    .filter(e -> e.getExerciseName() != null &&
+                                 e.getExerciseName().toLowerCase().contains(q.toLowerCase()))
+                    .toList()
+                : exerciseService.getAllExercises();
+        model.addAttribute("exercises", exercises);
+        model.addAttribute("q", q);
         model.addAttribute("userName", userDetails.getUsername());
         return "exercise/list";
     }
@@ -36,8 +46,9 @@ public class ExerciseController {
 
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
     @PostMapping("/create")
-    public String create(@ModelAttribute ExerciseDocument exercise) {
+    public String create(@ModelAttribute ExerciseDocument exercise, RedirectAttributes ra) {
         exerciseService.createExercise(exercise);
+        ra.addFlashAttribute("flashSuccess", "Ejercicio creado correctamente.");
         return "redirect:/exercise/list";
     }
 
@@ -52,15 +63,18 @@ public class ExerciseController {
 
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
     @PostMapping("/update/{id}")
-    public String update(@PathVariable String id, @ModelAttribute ExerciseDocument exercise) {
+    public String update(@PathVariable String id, @ModelAttribute ExerciseDocument exercise,
+                         RedirectAttributes ra) {
         exerciseService.updateExercise(id, exercise);
+        ra.addFlashAttribute("flashSuccess", "Ejercicio actualizado correctamente.");
         return "redirect:/exercise/list";
     }
 
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable String id) {
+    public String delete(@PathVariable String id, RedirectAttributes ra) {
         exerciseService.deleteExercise(id);
+        ra.addFlashAttribute("flashSuccess", "Ejercicio eliminado.");
         return "redirect:/exercise/list";
     }
 
@@ -76,15 +90,19 @@ public class ExerciseController {
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
     @PostMapping("/{id}/visual-supports/add")
     public String addVisualSupport(@PathVariable String id,
-                                   @ModelAttribute VisualSupportDocument vs) {
+                                   @ModelAttribute VisualSupportDocument vs,
+                                   RedirectAttributes ra) {
         exerciseService.addVisualSupport(id, vs);
+        ra.addFlashAttribute("flashSuccess", "Apoyo visual agregado.");
         return "redirect:/exercise/" + id + "/visual-supports";
     }
 
     @PreAuthorize("hasAuthority('MANAGE_USERS')")
     @PostMapping("/{id}/visual-supports/remove/{index}")
-    public String removeVisualSupport(@PathVariable String id, @PathVariable int index) {
+    public String removeVisualSupport(@PathVariable String id, @PathVariable int index,
+                                      RedirectAttributes ra) {
         exerciseService.removeVisualSupport(id, index);
+        ra.addFlashAttribute("flashSuccess", "Apoyo visual eliminado.");
         return "redirect:/exercise/" + id + "/visual-supports";
     }
 }

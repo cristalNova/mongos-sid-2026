@@ -19,8 +19,8 @@
     <main>
         <div class="user-list">
 
-            <div style="padding:1rem 0;">
-                <h2 style="margin:0;">Mis estudiantes asignados</h2>
+            <div class="list-header">
+                <h2>Mis estudiantes asignados</h2>
             </div>
 
             <div class="user-row" th:each="student : ${students}">
@@ -31,12 +31,11 @@
                 </div>
                 <div class="actions">
                     <a th:href="@{'/progress/student/' + ${student.id}}" class="btn-small">Ver progreso</a>
-                    <a th:href="@{'/recommendation/new?receiverId=' + ${student.id}}" class="btn-small"
-                       style="background:#5a3e8a; color:#fff;">Recomendar</a>
+                    <a th:href="@{'/recommendation/new?receiverId=' + ${student.id}}" class="btn-small btn-small--accent">Recomendar</a>
                 </div>
             </div>
 
-            <p th:if="${#lists.isEmpty(students)}" style="color:#888; padding:1rem;">
+            <p th:if="${#lists.isEmpty(students)}" class="empty-msg">
                 No tienes estudiantes asignados.
             </p>
 

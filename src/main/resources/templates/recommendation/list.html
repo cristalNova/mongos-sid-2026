@@ -19,8 +19,8 @@
     <main>
         <div class="user-list">
 
-            <div style="padding:1rem 0; display:flex; justify-content:space-between; align-items:center;">
-                <h2 style="margin:0;">Recomendaciones recibidas</h2>
+            <div class="list-header">
+                <h2>Recomendaciones recibidas</h2>
                 <a sec:authorize="hasAuthority('VIEW_USERS')"
                    th:href="@{/recommendation/sent}" class="btn-small">Ver enviadas</a>
             </div>
@@ -33,9 +33,9 @@
                 </div>
             </div>
 
-            <p th:if="${#lists.isEmpty(recommendations)}" style="color:#888; padding:1rem;">
-                No tienes recomendaciones recibidas.
-            </p>
+            <div th:if="${#lists.isEmpty(recommendations)}"
+                 th:replace="fragments/empty-state :: empty('No tienes recomendaciones recibidas.', 'Cuando un entrenador te envíe una recomendación aparecerá aquí.')">
+            </div>
 
         </div>
     </main>

@@ -19,21 +19,21 @@
         <section class="card">
 
             <h2>Apoyos registrados</h2>
-            <table style="width:100%; border-collapse:collapse;">
+            <table class="data-table">
                 <thead>
                     <tr>
-                        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ddd;">Tipo</th>
-                        <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #ddd;">URL</th>
-                        <th style="padding:0.5rem; border-bottom:1px solid #ddd;"></th>
+                        <th>Tipo</th>
+                        <th>URL</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="vs, stat : ${exercise.visualSupports}">
-                        <td style="padding:0.5rem;" th:text="${vs.supportType}"></td>
-                        <td style="padding:0.5rem;">
+                        <td th:text="${vs.supportType}"></td>
+                        <td>
                             <a th:href="${vs.url}" target="_blank" th:text="${vs.url}"></a>
                         </td>
-                        <td style="padding:0.5rem;">
+                        <td>
                             <form th:action="@{'/exercise/' + ${exercise.id} + '/visual-supports/remove/' + ${stat.index}}"
                                   method="post">
                                 <button class="danger" onclick="return confirm('¿Eliminar apoyo visual?')">Eliminar</button>
@@ -41,12 +41,12 @@
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(exercise.visualSupports)}">
-                        <td colspan="3" style="padding:1rem; color:#888;">Sin apoyos visuales.</td>
+                        <td colspan="3" class="empty-cell">Sin apoyos visuales.</td>
                     </tr>
                 </tbody>
             </table>
 
-            <hr style="margin: 1.5rem 0;">
+            <hr class="data-table-divider">
 
             <h2>Agregar apoyo visual</h2>
             <form th:action="@{'/exercise/' + ${exercise.id} + '/visual-supports/add'}"

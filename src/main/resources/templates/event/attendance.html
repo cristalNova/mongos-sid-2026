@@ -17,17 +17,43 @@
     <main>
         <div class="user-list">
 
-            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center;">
+            <div class="list-header">
                 <div>
-                    <h2 style="margin:0;" th:text="${event.name}">Evento</h2>
+                    <h2 th:text="${event.name}">Evento</h2>
                     <small th:text="${event.date != null ? #dates.format(event.date, 'dd/MM/yyyy') : ''}"></small>
                 </div>
-                <a th:href="@{/event/list}" class="btn-small">Volver</a>
+                <a th:href="@{/event/list}" class="btn-small">← Volver</a>
             </div>
 
-            <p th:if="${#lists.isEmpty(event.subscriptions)}" style="color:#888; padding:1rem;">
-                Este evento no tiene inscritos aún.
-            </p>
+            <!-- Attendance summary bar -->
+            <div class="attendance-summary" th:if="${totalCount > 0}">
+
+                <div class="attendance-stat">
+                    <div class="att-value" th:text="${attendedCount}">0</div>
+                    <div class="att-label">Asistieron</div>
+                </div>
+
+                <div class="attendance-stat">
+                    <div class="att-value" th:text="${totalCount}">0</div>
+                    <div class="att-label">Inscritos</div>
+                </div>
+
+                <div class="attendance-bar-wrapper">
+                    <div class="att-label">
+                        <span>Asistencia</span>
+                        <span th:text="${attendancePct + '%'}">0%</span>
+                    </div>
+                    <div class="attendance-bar-track">
+                        <div class="attendance-bar-fill"
+                             th:style="'width:' + ${attendancePct} + '%'"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div th:if="${#lists.isEmpty(event.subscriptions)}"
+                 th:replace="fragments/empty-state :: empty('Este evento no tiene inscritos aún.', null)">
+            </div>
 
             <div class="user-row" th:each="sub : ${event.subscriptions}">
 
@@ -36,9 +62,8 @@
                 </div>
 
                 <div class="roles">
-                    <span class="chip"
-                          th:text="${sub.attendance ? '✓ Asistió' : 'No marcado'}"
-                          th:style="${sub.attendance ? 'background:#d4edda; color:#155724;' : 'background:#f8d7da; color:#721c24;'}"></span>
+                    <span th:class="${'chip ' + (sub.attendance ? 'chip--success' : 'chip--danger')}"
+                          th:text="${sub.attendance ? '✓ Asistió' : 'No marcado'}"></span>
                 </div>
 
                 <div class="actions">
@@ -46,13 +71,13 @@
                           th:action="@{'/event/' + ${event.id} + '/attendance'}" method="post">
                         <input type="hidden" name="userId" th:value="${sub.userId}">
                         <input type="hidden" name="attended" value="true">
-                        <button class="btn-small" style="background:#28a745; color:#fff;">Marcar asistencia</button>
+                        <button class="btn-small btn-small--success">Marcar asistencia</button>
                     </form>
                     <form th:if="${sub.attendance}"
                           th:action="@{'/event/' + ${event.id} + '/attendance'}" method="post">
                         <input type="hidden" name="userId" th:value="${sub.userId}">
                         <input type="hidden" name="attended" value="false">
-                        <button class="btn-small" style="background:#6c757d; color:#fff;">Quitar asistencia</button>
+                        <button class="btn-small btn-small--muted">Quitar asistencia</button>
                     </form>
                 </div>
 

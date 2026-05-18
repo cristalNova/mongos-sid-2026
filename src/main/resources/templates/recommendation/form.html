@@ -13,25 +13,30 @@
 
     <header class="topbar">
         <h1>Nueva recomendación</h1>
-        <a th:href="@{/recommendation/sent}" class="btn-small">Volver</a>
+        <a th:href="@{/recommendation/sent}" class="btn-small">← Volver</a>
     </header>
 
     <main>
-        <section class="card">
+        <section class="card card--form">
             <form th:action="@{/recommendation/create}" method="post" class="form">
 
-                <label>Destinatario</label>
-                <select name="receiverId" required>
-                    <option value="" disabled selected>— Selecciona un usuario —</option>
-                    <option th:each="u : ${users}"
-                            th:value="${u.id}"
-                            th:text="${u.firstName + ' ' + u.lastName + ' (' + u.email + ')'}"
-                            th:selected="${receiverId != null and receiverId == u.id}"></option>
-                </select>
+                <div class="field--select field">
+                    <label for="receiverId">Destinatario *</label>
+                    <select id="receiverId" name="receiverId" required>
+                        <option value="" disabled selected>— Selecciona un usuario —</option>
+                        <option th:each="u : ${users}"
+                                th:value="${u.id}"
+                                th:text="${u.firstName + ' ' + u.lastName + ' (' + u.email + ')'}"
+                                th:selected="${receiverId != null and receiverId == u.id}"></option>
+                    </select>
+                </div>
 
-                <label>Mensaje / Recomendación</label>
-                <textarea name="message" rows="5" required
-                          placeholder="Escribe aquí tu recomendación de entrenamiento..."></textarea>
+                <div class="field field--textarea">
+                    <textarea id="message" name="message" rows="5"
+                              placeholder=" " required maxlength="500" data-counter></textarea>
+                    <label for="message">Mensaje / Recomendación *</label>
+                    <span class="char-counter"></span>
+                </div>
 
                 <button type="submit" class="btn">Enviar recomendación</button>
             </form>
@@ -39,6 +44,24 @@
     </main>
 
 </div>
+
+<script>
+(function () {
+    document.querySelectorAll('textarea[data-counter]').forEach(function (ta) {
+        var wrapper = ta.closest('.field--textarea');
+        var counter = wrapper ? wrapper.querySelector('.char-counter') : null;
+        if (!counter) return;
+        var max = ta.maxLength > 0 ? ta.maxLength : 500;
+        function update() {
+            var len = ta.value.length;
+            counter.textContent = len + ' / ' + max;
+            counter.classList.toggle('near-limit', len >= max * 0.9);
+        }
+        ta.addEventListener('input', update);
+        update();
+    });
+})();
+</script>
 
 </body>
 </html>

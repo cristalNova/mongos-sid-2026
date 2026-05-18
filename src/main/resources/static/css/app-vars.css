@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+
+/* =============================================================
+   DESIGN TOKENS — FitCampus
+   Todos los CSS del proyecto importan este archivo.
+   No escribir colores hex en otros CSS; usar estas variables.
+============================================================= */
+
+:root {
+    /* --- Colores principales --- */
+    --clr-primary:        #9EB16F;
+    --clr-primary-dk:     #7a9254;
+    --clr-danger:         #ff6b6b;
+    --clr-danger-dk:      #e05555;
+    --clr-accent:         #5a3e8a;
+    --clr-accent-lt:      #E7E6FF;
+
+    /* --- Paleta pastel (UI) --- */
+    --clr-pink:           #F3C1D9;
+    --clr-pink-lt:        #F8E6EF;
+    --clr-yellow:         #F5D76E;
+    --clr-yellow-lt:      #FFF3C4;
+    --clr-blue-lt:        #BACDED;
+    --clr-blue-lter:      #b7c9e6;
+
+    /* --- Superficies --- */
+    --clr-surface:        #ffffff;
+    --clr-surface-alt:    #FAF4E4;
+    --clr-surface-dk:     #f8f1e3;
+    --clr-surface-gray:   #e9ecef;
+
+    /* --- Texto --- */
+    --clr-text:           #2e2e2e;
+    --clr-text-dark:      #1f1f1f;
+    --clr-text-muted:     #888888;
+    --clr-text-muted-lt:  #aaaaaa;
+    --clr-border:         #dddddd;
+    --clr-border-lt:      #cccccc;
+
+    /* --- Semánticos (chips / badges) --- */
+    --clr-success-bg:     #d4edda;
+    --clr-success-text:   #155724;
+    --clr-error-bg:       #f8d7da;
+    --clr-error-text:     #721c24;
+    --clr-info-bg:        #cce5ff;
+    --clr-info-text:      #004085;
+
+    /* --- Tab colors (topbar) --- */
+    --clr-tab-dashboard:  #f3d36b;
+    --clr-tab-users:      #f7a6c6;
+    --clr-tab-exercises:  #b7c9e6;
+    --clr-tab-green:      #9dbb7c;
+
+    /* --- Espaciado --- */
+    --space-xs:   0.25rem;
+    --space-sm:   0.5rem;
+    --space-md:   1rem;
+    --space-lg:   1.5rem;
+    --space-xl:   2rem;
+
+    /* --- Bordes redondeados --- */
+    --radius-xs:  4px;
+    --radius-sm:  8px;
+    --radius-md:  12px;
+    --radius-lg:  16px;
+    --radius-xl:  20px;
+    --radius-2xl: 24px;
+    --radius-pill: 999px;
+
+    /* --- Sombras --- */
+    --shadow-sm:  0 1px 3px rgba(0,0,0,.08);
+    --shadow-md:  0 4px 12px rgba(0,0,0,.10);
+    --shadow-lg:  0 8px 24px rgba(0,0,0,.14);
+    --shadow-xl:  0 12px 30px rgba(0,0,0,.10);
+
+    /* --- Transiciones --- */
+    --transition:     150ms ease;
+    --transition-md:  250ms ease;
+
+    /* --- Tipografía --- */
+    --font:       'Montserrat', sans-serif;
+}
+
+/* =============================================================
+   DARK MODE TOKENS
+   Applied when <html data-theme="dark"> or via prefers-color-scheme.
+   All component CSS uses variables, so only tokens need overriding.
+============================================================= */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --clr-blue-lt:       #13111c;
+        --clr-blue-lter:     #191730;
+        --clr-surface:       #1e1c2e;
+        --clr-surface-alt:   #252338;
+        --clr-surface-dk:    #2a2840;
+        --clr-surface-gray:  #1f1e2e;
+        --clr-accent-lt:     #2a2040;
+        --clr-pink-lt:       #2a1f2d;
+        --clr-yellow-lt:     #2a2515;
+        --clr-text:          #e2e0f0;
+        --clr-text-dark:     #f0eeff;
+        --clr-text-muted:    #8b88a8;
+        --clr-border:        #35324e;
+        --clr-border-lt:     #3f3c58;
+        --clr-success-bg:    #1a2e20;
+        --clr-success-text:  #6ee08a;
+        --clr-error-bg:      #2e1a1a;
+        --clr-error-text:    #f08080;
+        --clr-info-bg:       #1a2035;
+        --clr-info-text:     #80b8f0;
+    }
+}
+
+[data-theme="dark"] {
+    --clr-blue-lt:       #13111c;
+    --clr-blue-lter:     #191730;
+    --clr-surface:       #1e1c2e;
+    --clr-surface-alt:   #252338;
+    --clr-surface-dk:    #2a2840;
+    --clr-surface-gray:  #1f1e2e;
+    --clr-accent-lt:     #2a2040;
+    --clr-pink-lt:       #2a1f2d;
+    --clr-yellow-lt:     #2a2515;
+    --clr-text:          #e2e0f0;
+    --clr-text-dark:     #f0eeff;
+    --clr-text-muted:    #8b88a8;
+    --clr-border:        #35324e;
+    --clr-border-lt:     #3f3c58;
+    --clr-success-bg:    #1a2e20;
+    --clr-success-text:  #6ee08a;
+    --clr-error-bg:      #2e1a1a;
+    --clr-error-text:    #f08080;
+    --clr-info-bg:       #1a2035;
+    --clr-info-text:     #80b8f0;
+}
+
+/* =============================================================
+   ICONO SVG INLINE
+   Uso: <svg class="icon"><use href="#icon-name"/></svg>
+============================================================= */
+.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.icon--sm  { width: 0.875em; height: 0.875em; }
+.icon--lg  { width: 1.25em;  height: 1.25em;  }
+.icon--xl  { width: 1.5em;   height: 1.5em;   }

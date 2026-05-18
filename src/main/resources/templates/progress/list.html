@@ -19,14 +19,29 @@
 
         <div class="user-list">
 
-            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-                <h2 style="margin:0;">Mi progreso</h2>
-                <div style="display:flex; gap:0.5rem;">
+            <div class="list-header">
+                <h2>Mi progreso</h2>
+                <div class="list-actions">
                     <a th:href="@{/progress/stats}" class="btn-small">Estadísticas</a>
-                    <a th:href="@{/progress/export/pdf}" class="btn-small" style="background:#e74c3c; color:#fff;">Exportar PDF</a>
+                    <a th:href="@{/progress/export/pdf}" class="btn-small btn-small--danger">Exportar PDF</a>
                     <a th:href="@{/progress/new}" class="btn-small">+ Nuevo registro</a>
                 </div>
             </div>
+
+            <form class="search-bar" method="get" th:action="@{/progress/list}">
+                <input type="search" name="q" th:value="${q}" placeholder="Buscar por ejercicio o rutina…" autocomplete="off">
+                <button type="submit">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    Buscar
+                </button>
+                <a th:if="${q != null and !#strings.isEmpty(q)}" th:href="@{/progress/list}" class="clear-search">Limpiar</a>
+            </form>
+
+            <p th:if="${q != null and !#strings.isEmpty(q)}" class="search-results-info"
+               th:text="'Resultados para: «' + ${q} + '»  (' + ${#lists.size(records)} + ' encontrados)'"></p>
 
             <div class="user-row" th:each="record : ${records}">
 
@@ -46,15 +61,18 @@
                 <div class="actions">
                     <a th:href="@{'/progress/edit/' + ${record.id}}" class="btn-small">Editar</a>
                     <form th:action="@{'/progress/delete/' + ${record.id}}" method="post">
-                        <button class="danger" onclick="return confirm('¿Eliminar registro?')">Eliminar</button>
+                        <button type="button" class="danger"
+                                data-confirm="¿Eliminar este registro de progreso?">
+                            Eliminar
+                        </button>
                     </form>
                 </div>
 
             </div>
 
-            <p th:if="${#lists.isEmpty(records)}" style="color:#888; padding:1rem;">
-                No tienes registros de progreso.
-            </p>
+            <div th:if="${#lists.isEmpty(records)}"
+                 th:replace="fragments/empty-state :: empty('No tienes registros de progreso.', 'Comienza registrando tu primera sesión con + Nuevo registro.')">
+            </div>
 
         </div>
 

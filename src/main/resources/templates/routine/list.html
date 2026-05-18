@@ -19,14 +19,29 @@
 
         <div class="user-list">
 
-            <div style="padding: 1rem 0; display:flex; justify-content:space-between; align-items:center; gap:1rem;">
-                <h2 style="margin:0;">Rutinas</h2>
-                <div style="display:flex; gap:0.5rem;">
+            <div class="list-header">
+                <h2>Rutinas</h2>
+                <div class="list-actions">
                     <a th:href="@{/routine/list}" class="btn-small">Públicas</a>
                     <a th:href="@{/routine/mine}" class="btn-small">Mis rutinas</a>
                     <a th:href="@{/routine/new}" class="btn-small">+ Nueva</a>
                 </div>
             </div>
+
+            <form class="search-bar" method="get" th:action="@{/routine/list}">
+                <input type="search" name="q" th:value="${q}" placeholder="Buscar rutina…" autocomplete="off">
+                <button type="submit">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    Buscar
+                </button>
+                <a th:if="${q != null and !#strings.isEmpty(q)}" th:href="@{/routine/list}" class="clear-search">Limpiar</a>
+            </form>
+
+            <p th:if="${q != null and !#strings.isEmpty(q)}" class="search-results-info"
+               th:text="'Resultados para: «' + ${q} + '»  (' + ${#lists.size(routines)} + ' encontrados)'"></p>
 
             <div class="user-row" th:each="routine : ${routines}">
 
@@ -37,30 +52,64 @@
                 </div>
 
                 <div class="roles">
-                    <span class="chip"
-                          th:text="${routine.visibility ? 'Pública' : 'Privada'}"
-                          th:style="${routine.visibility ? 'background:#d4edda; color:#155724;' : 'background:#f8d7da; color:#721c24;'}"></span>
+                    <span th:class="${'chip ' + (routine.visibility ? 'chip--success' : 'chip--danger')}"
+                          th:text="${routine.visibility ? 'Pública' : 'Privada'}"></span>
                     <span class="chip" th:text="${#lists.size(routine.exercises) + ' ejercicios'}"></span>
                 </div>
 
                 <div class="actions">
-                    <a th:href="@{'/routine/' + ${routine.id} + '/exercises'}" class="btn-small">Ejercicios</a>
-                    <a th:href="@{'/routine/edit/' + ${routine.id}}" class="btn-small">Editar</a>
-                    <form th:if="${routine.visibility}" th:action="@{'/routine/' + ${routine.id} + '/adopt'}" method="post"
-                          style="display:inline;">
-                        <button class="btn-small" style="background:#5a3e8a; color:#fff;"
-                                onclick="return confirm('¿Adoptar esta rutina a tus rutinas personales?')">Adoptar</button>
+
+                    <a th:href="@{'/routine/' + ${routine.id} + '/exercises'}" class="btn-small">
+                        Ejercicios
+                    </a>
+
+                    <a th:if="${!routine.visibility}"
+                       th:href="@{'/routine/edit/' + ${routine.id}}"
+                       class="btn-small">
+                        Editar
+                    </a>
+
+                    <a sec:authorize="hasAuthority('MANAGE_ROUTINES')"
+                       th:href="@{'/routine/edit/' + ${routine.id}}"
+                       class="btn-small">
+                        Editar
+                    </a>
+
+                    <form th:if="${routine.visibility}"
+                          th:action="@{'/routine/' + ${routine.id} + '/adopt'}"
+                          method="post"
+                          class="form-inline">
+                        <button type="button" class="btn-small btn-small--accent"
+                                data-confirm="¿Adoptar esta rutina a tus rutinas personales?">
+                            Adoptar
+                        </button>
                     </form>
-                    <form th:action="@{'/routine/delete/' + ${routine.id}}" method="post">
-                        <button class="danger" onclick="return confirm('¿Eliminar rutina?')">Eliminar</button>
+
+                    <form th:if="${!routine.visibility}"
+                          th:action="@{'/routine/delete/' + ${routine.id}}"
+                          method="post">
+                        <button type="button" class="danger"
+                                data-confirm="¿Eliminar esta rutina? Esta acción no se puede deshacer.">
+                            Eliminar
+                        </button>
                     </form>
+
+                    <form sec:authorize="hasAuthority('MANAGE_ROUTINES')"
+                          th:action="@{'/routine/delete/' + ${routine.id}}"
+                          method="post">
+                        <button type="button" class="danger"
+                                data-confirm="¿Eliminar esta rutina? Esta acción no se puede deshacer.">
+                            Eliminar
+                        </button>
+                    </form>
+
                 </div>
 
             </div>
 
-            <p th:if="${#lists.isEmpty(routines)}" style="color:#888; padding:1rem;">
-                No hay rutinas disponibles.
-            </p>
+            <div th:if="${#lists.isEmpty(routines)}"
+                 th:replace="fragments/empty-state :: empty('No hay rutinas disponibles.', 'Crea la primera con el botón + Nueva.')">
+            </div>
 
         </div>
 
