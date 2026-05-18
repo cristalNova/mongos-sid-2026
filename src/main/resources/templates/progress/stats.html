@@ -9,17 +9,6 @@
     <link rel="stylesheet" th:href="@{/css/user-list.css}">
     <link rel="stylesheet" th:href="@{/css/topbar.css}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
-    <style>
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; padding: 1rem 0; }
-        .stat-card { background: #fff; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .stat-card h3 { margin: 0 0 1rem; font-size: 1rem; color: #555; }
-        .chart-container { position: relative; height: 280px; }
-        .summary-boxes { display: flex; gap: 1rem; padding: 1rem 0; flex-wrap: wrap; }
-        .summary-box { background:#5a3e8a; color:#fff; border-radius:10px; padding:1rem 1.5rem; flex:1; min-width:140px; text-align:center; }
-        .summary-box .value { font-size: 2rem; font-weight: bold; }
-        .summary-box .label { font-size: 0.8rem; opacity: 0.85; margin-top: 4px; }
-        @media (max-width: 700px) { .stats-grid { grid-template-columns: 1fr; } }
-    </style>
 </head>
 <body>
 
@@ -29,50 +18,108 @@
 
     <main style="padding: 1rem 2rem;">
 
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-            <h2 style="margin:0;">Estadísticas de rendimiento</h2>
-            <div style="display:flex; gap:0.5rem;">
-                <a th:href="@{/progress/export/pdf}" class="btn-small"
-                   style="background:#e74c3c; color:#fff;">Descargar PDF</a>
+        <div class="list-header">
+            <h2>Estadísticas de rendimiento</h2>
+            <div class="list-actions">
+                <a th:href="@{/progress/export/pdf}" class="btn-small btn-small--danger">Descargar PDF</a>
                 <a th:href="@{/progress/list}" class="btn-small">Ver historial</a>
             </div>
         </div>
 
         <!-- Summary boxes -->
         <div class="summary-boxes">
-            <div class="summary-box">
+            <div class="summary-box summary-box--primary">
                 <div class="value" th:text="${totalRecords}">0</div>
                 <div class="label">Registros totales</div>
             </div>
-            <div class="summary-box" th:with="totalReps=${#aggregates.sum(records.![repetitions != null ? repetitions : 0])}">
-                <div class="value" th:text="${totalReps != null ? totalReps : 0}">0</div>
+            <div class="summary-box summary-box--green">
+                <div class="value" th:text="${totalReps}">0</div>
                 <div class="label">Repeticiones totales</div>
             </div>
-            <div class="summary-box" th:with="totalSeries=${#aggregates.sum(records.![series != null ? series : 0])}">
-                <div class="value" th:text="${totalSeries != null ? totalSeries : 0}">0</div>
+            <div class="summary-box summary-box--pink">
+                <div class="value" th:text="${totalSeries}">0</div>
                 <div class="label">Series totales</div>
+            </div>
+            <div class="summary-box summary-box--yellow">
+                <div class="value" th:text="${avgReps}">0</div>
+                <div class="label">Reps promedio/sesión</div>
+            </div>
+            <div class="summary-box summary-box--blue">
+                <div class="value" th:text="${avgWeight}">0</div>
+                <div class="label">Peso promedio (kg)</div>
             </div>
         </div>
 
-        <!-- Charts -->
-        <div class="stats-grid">
+        <!-- Charts grid -->
+        <div class="stats-grid" th:if="${!#lists.isEmpty(records)}">
+
             <div class="stat-card">
                 <h3>Repeticiones por sesión</h3>
                 <div class="chart-container">
                     <canvas id="repsChart"></canvas>
                 </div>
             </div>
+
             <div class="stat-card">
                 <h3>Peso levantado (kg) por sesión</h3>
                 <div class="chart-container">
                     <canvas id="weightChart"></canvas>
                 </div>
             </div>
+
+            <div class="stat-card">
+                <h3>Series por sesión</h3>
+                <div class="chart-container">
+                    <canvas id="seriesChart"></canvas>
+                </div>
+            </div>
+
         </div>
 
-        <p th:if="${#lists.isEmpty(records)}" style="color:#888; padding:1rem;">
-            No tienes registros de progreso aún. <a th:href="@{/progress/new}">Registra tu primer entrenamiento.</a>
-        </p>
+        <!-- Exercise sparklines table -->
+        <div class="stat-card" th:if="${!#lists.isEmpty(exerciseSparks)}"
+             style="margin-top: 1.5rem;">
+            <h3>Progreso por ejercicio (repeticiones)</h3>
+            <table class="spark-table">
+                <thead>
+                    <tr>
+                        <th>Ejercicio</th>
+                        <th>Tendencia</th>
+                        <th style="text-align:right">Sesiones</th>
+                        <th style="text-align:right">Máx. reps</th>
+                        <th style="text-align:right">Prom. reps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="spark : ${exerciseSparks}">
+                        <td th:text="${spark.name}">—</td>
+                        <td>
+                            <svg class="sparkline" width="80" height="30"
+                                 viewBox="0 0 80 30" aria-hidden="true">
+                                <polyline
+                                    th:attr="points=${spark.points}"
+                                    fill="none"
+                                    stroke="#5a3e8a"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"/>
+                                <!-- Dots at each point -->
+                                <circle th:if="${spark.count == 1}"
+                                        cx="40" cy="14" r="3"
+                                        fill="#5a3e8a"/>
+                            </svg>
+                        </td>
+                        <td style="text-align:right" th:text="${spark.count}">0</td>
+                        <td style="text-align:right" th:text="${spark.maxReps}">0</td>
+                        <td style="text-align:right" th:text="${spark.avgReps}">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${#lists.isEmpty(records)}"
+             th:replace="fragments/empty-state :: empty('No tienes registros de progreso aún.', 'Registra tu primera sesión para ver estadísticas.')">
+        </div>
 
     </main>
 
@@ -80,22 +127,45 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    const labels      = /*[[${labels}]]*/ [];
-    const repsData    = /*[[${repsData}]]*/ [];
-    const weightData  = /*[[${weightData}]]*/ [];
+/*<![CDATA[*/
+const labels     = /*[[${labels}]]*/  [];
+const repsData   = /*[[${repsData}]]*/  [];
+const weightData = /*[[${weightData}]]*/ [];
+const seriesData = /*[[${seriesData}]]*/ [];
 
-    const commonOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-            x: { ticks: { maxRotation: 45 } },
-            y: { beginAtZero: true }
-        }
-    };
+// Shared tooltip plugin config
+const tooltipPlugin = {
+    backgroundColor: 'rgba(30,20,50,0.88)',
+    titleColor: '#fff',
+    bodyColor: '#ddd',
+    padding: 10,
+    cornerRadius: 8,
+    displayColors: false
+};
 
-    new Chart(document.getElementById('repsChart'), {
+// Shared scale config
+const scaleConfig = {
+    x: {
+        ticks: { maxRotation: 45, font: { size: 11 } },
+        grid:  { color: 'rgba(0,0,0,0.05)' }
+    },
+    y: {
+        beginAtZero: true,
+        ticks: { font: { size: 11 } },
+        grid:  { color: 'rgba(0,0,0,0.05)' }
+    }
+};
+
+// --- Reps chart (line with gradient fill) ---
+(function () {
+    const canvas = document.getElementById('repsChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 0, 260);
+    grad.addColorStop(0, 'rgba(90,62,138,0.35)');
+    grad.addColorStop(1, 'rgba(90,62,138,0.0)');
+
+    new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
@@ -103,29 +173,88 @@
                 label: 'Repeticiones',
                 data: repsData,
                 borderColor: '#5a3e8a',
-                backgroundColor: 'rgba(90,62,138,0.1)',
-                tension: 0.3,
-                fill: true
+                backgroundColor: grad,
+                borderWidth: 2.5,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 3,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#5a3e8a'
             }]
         },
-        options: commonOptions
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: tooltipPlugin },
+            scales: scaleConfig
+        }
     });
+})();
 
-    new Chart(document.getElementById('weightChart'), {
+// --- Weight chart (bar with gradient) ---
+(function () {
+    const canvas = document.getElementById('weightChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 0, 260);
+    grad.addColorStop(0, 'rgba(158,177,111,0.85)');
+    grad.addColorStop(1, 'rgba(158,177,111,0.35)');
+
+    new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
             datasets: [{
                 label: 'Peso (kg)',
                 data: weightData,
-                backgroundColor: 'rgba(175,147,214,0.7)',
-                borderColor: '#5a3e8a',
-                borderWidth: 1
+                backgroundColor: grad,
+                borderColor: '#7a9254',
+                borderWidth: 1.5,
+                borderRadius: 6,
+                borderSkipped: false
             }]
         },
-        options: commonOptions
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: tooltipPlugin },
+            scales: scaleConfig
+        }
     });
-    /*]]>*/
+})();
+
+// --- Series chart (bar) ---
+(function () {
+    const canvas = document.getElementById('seriesChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 0, 260);
+    grad.addColorStop(0, 'rgba(243,195,217,0.9)');
+    grad.addColorStop(1, 'rgba(243,195,217,0.35)');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Series',
+                data: seriesData,
+                backgroundColor: grad,
+                borderColor: '#d48aab',
+                borderWidth: 1.5,
+                borderRadius: 6,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: tooltipPlugin },
+            scales: scaleConfig
+        }
+    });
+})();
+/*]]>*/
 </script>
 
 </body>

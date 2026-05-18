@@ -1,0 +1,33 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Empty-state fragment. Shown when a list has no items.
+  Params:
+    message — primary text (e.g. "No hay ejercicios registrados.")
+    sub     — secondary text (optional, e.g. "Crea el primero usando el botón de arriba.")
+
+  Usage:
+    <div th:replace="fragments/empty-state :: empty('No hay ejercicios.', 'Crea uno nuevo.')"></div>
+    <div th:replace="fragments/empty-state :: empty('No hay registros.', null)"></div>
+-->
+<div th:fragment="empty(message, sub)" class="empty-state">
+
+    <svg class="empty-state__icon" viewBox="0 0 64 64" fill="none"
+         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="8" y="16" width="48" height="36" rx="5" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M22 16V12a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4" stroke="currentColor" stroke-width="2.5"/>
+        <line x1="20" y1="30" x2="44" y2="30" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="20" y1="38" x2="36" y2="38" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="50" cy="50" r="10" fill="white" stroke="currentColor" stroke-width="2"/>
+        <line x1="47" y1="50" x2="53" y2="50" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+
+    <span class="empty-state__title" th:text="${message}">No hay elementos registrados.</span>
+    <span th:if="${sub != null}" class="empty-state__sub" th:text="${sub}"></span>
+
+</div>
+
+</body>
+</html>

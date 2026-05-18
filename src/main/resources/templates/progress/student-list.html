@@ -19,14 +19,13 @@
     <main>
         <div class="user-list">
 
-            <div style="padding:1rem 0; display:flex; justify-content:space-between; align-items:center;">
+            <div class="list-header">
                 <div>
-                    <h2 style="margin:0;" th:text="'Progreso de ' + ${student.firstName + ' ' + student.lastName}"></h2>
-                    <small th:text="${student.email}" style="color:#888;"></small>
+                    <h2 th:text="'Progreso de ' + ${student.firstName + ' ' + student.lastName}"></h2>
+                    <small class="text-muted" th:text="${student.email}"></small>
                 </div>
-                <div style="display:flex; gap:0.5rem;">
-                    <a th:href="@{'/recommendation/new?receiverId=' + ${student.id}}" class="btn-small"
-                       style="background:#5a3e8a; color:#fff;">Recomendar</a>
+                <div class="list-actions">
+                    <a th:href="@{'/recommendation/new?receiverId=' + ${student.id}}" class="btn-small btn-small--accent">Recomendar</a>
                     <a th:href="@{/user/my-students}" class="btn-small">Volver</a>
                 </div>
             </div>
@@ -44,7 +43,7 @@
                 </div>
             </div>
 
-            <p th:if="${#lists.isEmpty(records)}" style="color:#888; padding:1rem;">
+            <p th:if="${#lists.isEmpty(records)}" class="empty-msg">
                 Este estudiante no tiene registros de progreso.
             </p>
 

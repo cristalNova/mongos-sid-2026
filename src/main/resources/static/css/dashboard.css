@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+@import './app-vars.css';
 
 * {
     margin: 0;
@@ -7,16 +7,13 @@
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
-
-    /* pastel más suave */
-    background: linear-gradient(135deg, #BACDED, #E7E6FF);
-
+    font-family: var(--font);
+    background: linear-gradient(135deg, var(--clr-blue-lt), var(--clr-accent-lt));
     overflow-x: hidden;
-    color: #1f1f1f;
+    color: var(--clr-text-dark);
 }
 
-/* ===================== DECOR BACKGROUND (NO INTERFIERE) ===================== */
+/* ===================== DECOR BACKGROUND ===================== */
 .decor {
     position: fixed;
     top: 0;
@@ -24,7 +21,7 @@ body {
     width: 240px;
 
     z-index: 0;
-    opacity: 0.18; /* más suave */
+    opacity: 0.18;
 
     pointer-events: none;
 
@@ -36,7 +33,7 @@ body {
     filter: blur(0.2px);
 }
 
-.decor.left { left: 0; }
+.decor.left  { left: 0;  }
 .decor.right { right: 0; }
 
 .decor .stack {
@@ -80,11 +77,12 @@ body {
     justify-content: space-between;
     align-items: center;
 
-    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-xl);
 }
 
+/* ===================== HERO CARD ===================== */
 .hero-card {
-    background: linear-gradient(135deg, #FAF4E4, #F8E6EF);
+    background: linear-gradient(135deg, var(--clr-surface-alt), var(--clr-pink-lt));
 
     border-radius: 28px;
 
@@ -117,8 +115,8 @@ body {
 .dashboard-card {
     position: relative;
 
-    background: #FAF4E4;
-    border-radius: 24px;
+    background: var(--clr-surface-alt);
+    border-radius: var(--radius-2xl);
 
     padding: 24px;
     min-height: 180px;
@@ -128,7 +126,7 @@ body {
 
     box-shadow: 0 10px 24px rgba(0,0,0,0.06);
 
-    transition: all 0.25s ease;
+    transition: all var(--transition-md);
 
     display: flex;
     flex-direction: column;
@@ -139,37 +137,36 @@ body {
 
 .dashboard-card:hover {
     transform: translateY(-6px);
-    background: #ffffff;
-    box-shadow: 0 16px 30px rgba(0,0,0,0.12);
+    background: var(--clr-surface);
+    box-shadow: var(--shadow-lg);
 }
 
-/* ===================== LOGOUT BUTTON (MEJORADO) ===================== */
+/* ===================== LOGOUT BUTTON ===================== */
 .logout-form {
     margin: 0;
 }
 
 .logout-btn {
     padding: 12px 26px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
 
     border: none;
     cursor: pointer;
 
     font-weight: 700;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font);
 
     color: #3a3a3a;
 
-    /* pastel simple */
-    background: #F8E6EF;
+    background: var(--clr-pink-lt);
 
     box-shadow: 0 6px 14px rgba(0,0,0,0.08);
 
-    transition: all 0.2s ease;
+    transition: all var(--transition);
 }
 
 .logout-btn:hover {
-    background: #E7E6FF;
+    background: var(--clr-accent-lt);
     transform: translateY(-2px);
     box-shadow: 0 10px 18px rgba(0,0,0,0.12);
 }
@@ -177,4 +174,116 @@ body {
 .logout-btn:active {
     transform: scale(0.98);
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ===================== ANIMATIONS ===================== */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-card {
+    animation: fadeInUp 0.3s ease both;
+}
+
+.cards-grid .dashboard-card:nth-child(1)  { animation-delay:  0ms; }
+.cards-grid .dashboard-card:nth-child(2)  { animation-delay: 50ms; }
+.cards-grid .dashboard-card:nth-child(3)  { animation-delay:100ms; }
+.cards-grid .dashboard-card:nth-child(4)  { animation-delay:150ms; }
+.cards-grid .dashboard-card:nth-child(5)  { animation-delay:200ms; }
+.cards-grid .dashboard-card:nth-child(6)  { animation-delay:250ms; }
+.cards-grid .dashboard-card:nth-child(n+7){ animation-delay:300ms; }
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-card { animation: none; }
+}
+
+/* ===================== DARK MODE ===================== */
+[data-theme="dark"] body {
+    background: linear-gradient(135deg, var(--clr-blue-lt), var(--clr-accent-lt));
+    color: var(--clr-text);
+}
+
+[data-theme="dark"] .topbar {
+    background: rgba(30, 28, 46, 0.82);
+}
+
+[data-theme="dark"] .hero-card {
+    background: linear-gradient(135deg, var(--clr-surface-alt), var(--clr-surface-dk));
+}
+
+[data-theme="dark"] .dashboard-card {
+    background: var(--clr-surface);
+    color: var(--clr-text);
+}
+
+[data-theme="dark"] .dashboard-card:hover {
+    background: var(--clr-surface-alt);
+}
+
+[data-theme="dark"] .brand h1,
+[data-theme="dark"] .brand p,
+[data-theme="dark"] .welcome {
+    color: var(--clr-text);
+}
+
+/* ===================== MOBILE ===================== */
+@media (max-width: 768px) {
+    .page-wrapper {
+        width: calc(100% - 20px);
+        margin: 20px auto;
+    }
+
+    .decor { display: none; }
+
+    .cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 14px;
+    }
+
+    .dashboard-card {
+        min-height: 140px;
+        padding: 16px;
+    }
+
+    .card-metric {
+        font-size: 1.5rem;
+    }
+}
+
+/* ===================== CARD ICON & METRIC ===================== */
+.card-icon {
+    width: 36px;
+    height: 36px;
+    color: var(--clr-primary);
+    flex-shrink: 0;
+    margin-bottom: var(--space-sm);
+    stroke-width: 1.5;
+}
+
+.card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.dashboard-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--clr-text-dark);
+}
+
+.dashboard-card p {
+    font-size: 0.825rem;
+    color: var(--clr-text-muted);
+    line-height: 1.5;
+}
+
+.card-metric {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--clr-primary);
+    margin-top: auto;
+    padding-top: var(--space-sm);
 }

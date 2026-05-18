@@ -1,89 +1,71 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User</title>
-
+    <title>Editar usuario</title>
     <link rel="stylesheet" th:href="@{/css/user-detail.css}">
+    <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
 </head>
 
 <body>
 
 <div class="page-wrapper">
 
-    <!-- TOPBAR -->
     <header class="topbar">
-
-        <h1>Edit User</h1>
-
-        <a th:href="@{/user/list}" class="btn-small">Back</a>
-
+        <h1>Editar usuario</h1>
+        <a th:href="@{/user/list}" class="btn-small">← Volver</a>
     </header>
 
-    <!-- CONTENT -->
     <main>
-
-        <section class="card">
-
-            <h2>User Information</h2>
+        <section class="card card--form">
 
             <form th:action="@{'/user/update/' + ${user.id}}"
                   method="post"
                   class="form">
 
-                <!-- FIRST NAME -->
-                <label>First name</label>
-                <input type="text"
-                       name="firstName"
-                       th:value="${user.firstName}"
-                       required>
+                <div class="field">
+                    <input type="text" id="firstName" name="firstName"
+                           placeholder=" " th:value="${user.firstName}" required>
+                    <label for="firstName">Nombre *</label>
+                </div>
 
-                <!-- LAST NAME -->
-                <label>Last name</label>
-                <input type="text"
-                       name="lastName"
-                       th:value="${user.lastName}"
-                       required>
+                <div class="field">
+                    <input type="text" id="lastName" name="lastName"
+                           placeholder=" " th:value="${user.lastName}" required>
+                    <label for="lastName">Apellido *</label>
+                </div>
 
-                <!-- EMAIL -->
-                <label>Email</label>
-                <input type="email"
-                       name="email"
-                       th:value="${user.email}"
-                       required>
+                <div class="field">
+                    <input type="email" id="email" name="email"
+                           placeholder=" " th:value="${user.email}" required>
+                    <label for="email">Email *</label>
+                </div>
 
-                <!-- PASSWORD -->
-                <label>Password (leave empty if not changing)</label>
-                <input type="password"
-                       name="password"
-                       placeholder="New password">
+                <div class="field">
+                    <input type="password" id="password" name="password" placeholder=" ">
+                    <label for="password">Contraseña (dejar vacío para no cambiar)</label>
+                </div>
 
-                <!-- AGE -->
-                <label>Age</label>
-                <input type="number"
-                       name="age"
-                       th:value="${user.age}">
+                <div class="field">
+                    <input type="number" id="age" name="age"
+                           placeholder=" " th:value="${user.age}">
+                    <label for="age">Edad</label>
+                </div>
 
-                <!-- WEIGHT -->
-                <label>Weight</label>
-                <input type="number"
-                       step="0.1"
-                       name="weight"
-                       th:value="${user.weight}">
+                <div class="field">
+                    <input type="number" id="weight" name="weight"
+                           placeholder=" " step="0.1" th:value="${user.weight}">
+                    <label for="weight">Peso (kg)</label>
+                </div>
 
-                <!-- HEIGHT -->
-                <label>Height</label>
-                <input type="number"
-                       step="0.1"
-                       name="height"
-                       th:value="${user.height}">
+                <div class="field">
+                    <input type="number" id="height" name="height"
+                           placeholder=" " step="0.1" th:value="${user.height}">
+                    <label for="height">Altura (cm)</label>
+                </div>
 
-
-                <!-- SUBMIT -->
-                <button type="submit" class="btn">
-                    Update user
-                </button>
+                <button type="submit" class="btn">Guardar cambios</button>
 
             </form>
 

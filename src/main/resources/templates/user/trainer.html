@@ -22,16 +22,13 @@
 
             <h2 th:text="${user.firstName + ' ' + user.lastName}"></h2>
 
-            <div th:if="${user.trainers != null and not #lists.isEmpty(user.trainers)}"
-                 style="margin-bottom:1.5rem;">
+            <div th:if="${user.trainers != null and not #lists.isEmpty(user.trainers)}" class="section-block">
                 <strong>Entrenadores asignados:</strong>
-                <div th:each="t : ${user.trainers}"
-                     style="display:flex; align-items:center; justify-content:space-between; padding:0.4rem 0; border-bottom:1px solid #eee;">
+                <div th:each="t : ${user.trainers}" class="list-item-row">
                     <span th:text="${t.firstName + ' ' + t.lastName + ' (' + t.email + ')'}"></span>
-                    <form th:action="@{'/user/' + ${user.id} + '/trainer/remove'}" method="post" style="margin:0;">
+                    <form th:action="@{'/user/' + ${user.id} + '/trainer/remove'}" method="post" class="form-zero">
                         <input type="hidden" name="trainerId" th:value="${t.id}">
-                        <button class="danger" style="padding:0.2rem 0.6rem; font-size:0.8rem;"
-                                onclick="return confirm('¿Retirar entrenador?')">Retirar</button>
+                        <button class="btn-xs danger" onclick="return confirm('¿Retirar entrenador?')">Retirar</button>
                     </form>
                 </div>
             </div>
@@ -46,7 +43,7 @@
                             th:text="${t.firstName + ' ' + t.lastName + ' (' + t.email + ')'}"></option>
                 </select>
 
-                <p th:if="${#lists.isEmpty(trainers)}" style="color:#888;">
+                <p th:if="${#lists.isEmpty(trainers)}" class="text-muted">
                     No hay entrenadores registrados. Asigna el rol TRAINER a un usuario primero.
                 </p>
 

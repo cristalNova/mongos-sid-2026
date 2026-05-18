@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/routine")
@@ -25,8 +26,17 @@ public class RoutineController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
-    public String list(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        model.addAttribute("routines", routineService.getPublicRoutines());
+    public String list(Model model,
+                       @AuthenticationPrincipal UserDetails userDetails,
+                       @RequestParam(required = false) String q) {
+        var routines = (q != null && !q.isBlank())
+                ? routineService.getPublicRoutines().stream()
+                    .filter(r -> r.getRoutineName() != null &&
+                                 r.getRoutineName().toLowerCase().contains(q.toLowerCase()))
+                    .toList()
+                : routineService.getPublicRoutines();
+        model.addAttribute("routines", routines);
+        model.addAttribute("q", q);
         model.addAttribute("userName", userDetails.getUsername());
         return "routine/list";
     }
@@ -51,9 +61,11 @@ public class RoutineController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String create(@ModelAttribute RoutineDocument routine,
-                         @AuthenticationPrincipal UserDetails userDetails) {
+                         @AuthenticationPrincipal UserDetails userDetails,
+                         RedirectAttributes ra) {
         int ownerId = userService.getUserByEmail(userDetails.getUsername()).getId();
         routineService.createRoutine(routine, ownerId);
+        ra.addFlashAttribute("flashSuccess", "Rutina creada correctamente.");
         return "redirect:/routine/mine";
     }
 
@@ -68,15 +80,18 @@ public class RoutineController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/update/{id}")
-    public String update(@PathVariable String id, @ModelAttribute RoutineDocument routine) {
+    public String update(@PathVariable String id, @ModelAttribute RoutineDocument routine,
+                         RedirectAttributes ra) {
         routineService.updateRoutine(id, routine);
+        ra.addFlashAttribute("flashSuccess", "Rutina actualizada correctamente.");
         return "redirect:/routine/mine";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable String id) {
+    public String delete(@PathVariable String id, RedirectAttributes ra) {
         routineService.deleteRoutine(id);
+        ra.addFlashAttribute("flashSuccess", "Rutina eliminada.");
         return "redirect:/routine/mine";
     }
 
@@ -92,23 +107,29 @@ public class RoutineController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/exercises/add")
-    public String addExercise(@PathVariable String id, @RequestParam String exerciseId) {
+    public String addExercise(@PathVariable String id, @RequestParam String exerciseId,
+                              RedirectAttributes ra) {
         routineService.addExercise(id, exerciseId);
+        ra.addFlashAttribute("flashSuccess", "Ejercicio agregado a la rutina.");
         return "redirect:/routine/" + id + "/exercises";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/exercises/remove/{index}")
-    public String removeExercise(@PathVariable String id, @PathVariable int index) {
+    public String removeExercise(@PathVariable String id, @PathVariable int index,
+                                 RedirectAttributes ra) {
         routineService.removeExercise(id, index);
+        ra.addFlashAttribute("flashSuccess", "Ejercicio quitado de la rutina.");
         return "redirect:/routine/" + id + "/exercises";
     }
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/adopt")
-    public String adopt(@PathVariable String id, @AuthenticationPrincipal UserDetails userDetails) {
+    public String adopt(@PathVariable String id, @AuthenticationPrincipal UserDetails userDetails,
+                        RedirectAttributes ra) {
         int userId = userService.getUserByEmail(userDetails.getUsername()).getId();
         routineService.adoptRoutine(id, userId);
+        ra.addFlashAttribute("flashSuccess", "Rutina adoptada a tus rutinas personales.");
         return "redirect:/routine/mine";
     }
 }

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+@import './app-vars.css';
 
 * {
     margin: 0;
@@ -7,13 +7,13 @@
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font);
     height: 100vh;
     width: 100vw;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #BACDED;
+    background: var(--clr-blue-lt);
     position: relative;
     overflow: hidden;
 }
@@ -29,8 +29,8 @@ body::before {
     z-index: 2;
     background: repeating-linear-gradient(
             90deg,
-            #FCBAE4, #F3C1D9 10px,
-            #F8E6EF 10px, #F8E6EF 20px
+            #FCBAE4, var(--clr-pink) 10px,
+            var(--clr-pink-lt) 10px, var(--clr-pink-lt) 20px
     );
 }
 
@@ -44,8 +44,8 @@ body::after {
     z-index: 2;
     background: repeating-linear-gradient(
             90deg,
-            #F6DB70, #F5D76E 10px,
-            #FFF3C4 10px, #FFF3C4 20px
+            #F6DB70, var(--clr-yellow) 10px,
+            var(--clr-yellow-lt) 10px, var(--clr-yellow-lt) 20px
     );
 }
 
@@ -72,7 +72,7 @@ form .title {
 label {
     font-size: 15px;
     font-weight: 400;
-    color: #2e2e2e;
+    color: var(--clr-text);
     width: 40%;
     text-align: left;
 }
@@ -83,14 +83,14 @@ input {
     border-radius: 30px;
     border: none;
     outline: none;
-    background: #FAF4E4;
+    background: var(--clr-surface-alt);
     font-size: 14px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font);
     transition: box-shadow 0.3s;
 }
 
 input:focus {
-    box-shadow: 0 0 0 2px #9EB16F;
+    box-shadow: 0 0 0 2px var(--clr-primary);
 }
 
 button {
@@ -98,16 +98,16 @@ button {
     padding: 12px 30px;
     border-radius: 25px;
     border: none;
-    background: #9EB16F;
+    background: var(--clr-primary);
     color: black;
     font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font);
     cursor: pointer;
     transition: background 0.3s, transform 0.3s;
 }
 
 button:hover {
-    background: #AF93D6;
+    background: var(--clr-accent-lt);
     transform: scale(1.05);
 }
 
@@ -155,7 +155,6 @@ body:has(button:hover) .decor.right {
     transform: translateX(30%) translateY(calc(-50% - 10px));
 }
 
-/* Bottom con :has() para que responda al hover del botón */
 body:has(button:hover) .decor.bottom {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
@@ -182,10 +181,25 @@ body:has(button:hover) .decor.bottom {
     width: 100%;
 }
 
-/* Responsivo: ocultar decors laterales en pantallas pequeñas */
+/* Responsivo */
 @media (max-width: 500px) {
     .decor.left,
     .decor.right {
         display: none;
     }
+}
+
+/* Dark mode */
+[data-theme="dark"] body {
+    background: var(--clr-blue-lt);
+}
+
+[data-theme="dark"] input {
+    background: var(--clr-surface);
+    color: var(--clr-text);
+    border: 1.5px solid var(--clr-border);
+}
+
+[data-theme="dark"] label {
+    color: var(--clr-text);
 }

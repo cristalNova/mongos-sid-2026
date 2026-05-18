@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de progreso</title>
+    <title th:text="${record.id == null ? 'Nuevo registro' : 'Editar registro'}">Progreso</title>
     <link rel="stylesheet" th:href="@{/css/user-detail.css}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
 </head>
@@ -13,18 +13,18 @@
 
     <header class="topbar">
         <h1 th:text="${record.id == null ? 'Nuevo registro' : 'Editar registro'}">Progreso</h1>
-        <a th:href="@{/progress/list}" class="btn-small">Volver</a>
+        <a th:href="@{/progress/list}" class="btn-small">← Volver</a>
     </header>
 
     <main>
-        <section class="card">
+        <section class="card card--form">
 
             <form th:action="@{__${record.id == null ? '/progress/create' : '/progress/update/' + record.id}__}"
                   method="post" class="form">
 
-                <div th:if="${record.id == null}">
-                    <label>Rutina</label>
-                    <select name="routineId" required>
+                <div th:if="${record.id == null}" class="field--select field">
+                    <label for="routineId">Rutina *</label>
+                    <select id="routineId" name="routineId" required>
                         <option value="" disabled selected>— Selecciona una rutina —</option>
                         <option th:each="r : ${routines}"
                                 th:value="${r.id}"
@@ -32,32 +32,63 @@
                     </select>
                 </div>
 
-                <label>Nombre del ejercicio</label>
-                <input type="text" name="exerciseName" th:value="${record.exerciseName}">
+                <div class="field">
+                    <input type="text" id="exerciseName" name="exerciseName"
+                           placeholder=" " th:value="${record.exerciseName}">
+                    <label for="exerciseName">Nombre del ejercicio</label>
+                </div>
 
-                <label>Fecha</label>
-                <input type="date" name="date"
-                       th:value="${record.date != null ? #dates.format(record.date, 'yyyy-MM-dd') : ''}">
+                <div class="field">
+                    <input type="date" id="date" name="date"
+                           placeholder=" "
+                           th:value="${record.date != null ? #dates.format(record.date, 'yyyy-MM-dd') : ''}">
+                    <label for="date">Fecha</label>
+                </div>
 
-                <label>Hora</label>
-                <input type="text" name="time" placeholder="ej: 08:30"
-                       th:value="${record.time}">
+                <div class="field">
+                    <input type="text" id="time" name="time"
+                           placeholder=" " th:value="${record.time}"
+                           list="time-suggestions" autocomplete="off">
+                    <label for="time">Hora</label>
+                </div>
+                <datalist id="time-suggestions">
+                    <option value="06:00"/><option value="07:00"/><option value="08:00"/>
+                    <option value="09:00"/><option value="10:00"/><option value="12:00"/>
+                    <option value="14:00"/><option value="16:00"/><option value="18:00"/>
+                    <option value="19:00"/><option value="20:00"/><option value="21:00"/>
+                </datalist>
 
-                <label>Series</label>
-                <input type="number" name="series" th:value="${record.series}">
+                <div class="field">
+                    <input type="number" id="series" name="series"
+                           placeholder=" " th:value="${record.series}">
+                    <label for="series">Series</label>
+                </div>
 
-                <label>Repeticiones</label>
-                <input type="number" name="repetitions" th:value="${record.repetitions}">
+                <div class="field">
+                    <input type="number" id="repetitions" name="repetitions"
+                           placeholder=" " th:value="${record.repetitions}">
+                    <label for="repetitions">Repeticiones</label>
+                </div>
 
-                <label>Peso (kg)</label>
-                <input type="number" step="0.5" name="weight" th:value="${record.weight}">
+                <div class="field">
+                    <input type="number" id="weight" name="weight"
+                           placeholder=" " step="0.5" th:value="${record.weight}">
+                    <label for="weight">Peso (kg)</label>
+                </div>
 
-                <label>Equipo utilizado</label>
-                <input type="text" name="equipmentUsed" th:value="${record.equipmentUsed}">
+                <div class="field">
+                    <input type="text" id="equipmentUsed" name="equipmentUsed"
+                           placeholder=" " th:value="${record.equipmentUsed}">
+                    <label for="equipmentUsed">Equipo utilizado</label>
+                </div>
 
-                <label>Notas de progreso</label>
-                <textarea name="progressNotes" rows="3"
-                          th:text="${record.progressNotes}"></textarea>
+                <div class="field field--textarea">
+                    <textarea id="progressNotes" name="progressNotes" rows="3"
+                              placeholder=" " maxlength="400" data-counter
+                              th:text="${record.progressNotes}"></textarea>
+                    <label for="progressNotes">Notas de progreso</label>
+                    <span class="char-counter"></span>
+                </div>
 
                 <button type="submit" class="btn"
                         th:text="${record.id == null ? 'Guardar registro' : 'Actualizar registro'}">Guardar</button>
@@ -67,6 +98,24 @@
     </main>
 
 </div>
+
+<script>
+(function () {
+    document.querySelectorAll('textarea[data-counter]').forEach(function (ta) {
+        var wrapper = ta.closest('.field--textarea');
+        var counter = wrapper ? wrapper.querySelector('.char-counter') : null;
+        if (!counter) return;
+        var max = ta.maxLength > 0 ? ta.maxLength : 500;
+        function update() {
+            var len = ta.value.length;
+            counter.textContent = len + ' / ' + max;
+            counter.classList.toggle('near-limit', len >= max * 0.9);
+        }
+        ta.addEventListener('input', update);
+        update();
+    });
+})();
+</script>
 
 </body>
 </html>

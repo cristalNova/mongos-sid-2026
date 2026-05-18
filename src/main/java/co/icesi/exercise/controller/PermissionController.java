@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -28,12 +29,13 @@ public class PermissionController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('MANAGE_PERMISSIONS')")
-    public String createPermission(@ModelAttribute PermissionDTO dto) {
+    public String createPermission(@ModelAttribute PermissionDTO dto, RedirectAttributes ra) {
 
         Permission permission = new Permission();
         permission.setName(dto.getName());
 
         permissionService.createPermission(permission);
+        ra.addFlashAttribute("flashSuccess", "Permiso creado correctamente.");
 
         return "redirect:/permission/view";
     }
@@ -54,20 +56,23 @@ public class PermissionController {
     }
     @PostMapping("/update/{id}")
     @PreAuthorize("hasAuthority('MANAGE_PERMISSIONS')")
-    public String updatePermission(@PathVariable int id, @ModelAttribute PermissionDTO dto) {
+    public String updatePermission(@PathVariable int id, @ModelAttribute PermissionDTO dto,
+                                   RedirectAttributes ra) {
 
         Permission permission = new Permission();
         permission.setName(dto.getName());
 
         permissionService.updatePermission(id, permission);
+        ra.addFlashAttribute("flashSuccess", "Permiso actualizado correctamente.");
 
         return "redirect:/permission/view";
     }
 
     @PostMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('MANAGE_PERMISSIONS')")
-    public String deletePermission(@PathVariable int id) {
+    public String deletePermission(@PathVariable int id, RedirectAttributes ra) {
         permissionService.deletePermission(id);
+        ra.addFlashAttribute("flashSuccess", "Permiso eliminado.");
         return "redirect:/permission/view";
     }
 

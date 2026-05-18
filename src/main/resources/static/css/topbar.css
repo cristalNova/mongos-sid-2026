@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
-
+@import './app-vars.css';
 
 * {
     margin: 0;
@@ -17,7 +16,7 @@
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(6px);
 
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font);
 }
 
 .nav-tabs {
@@ -27,22 +26,37 @@
 
 .tab {
     padding: 10px 18px;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
     text-decoration: none;
     font-weight: 600;
-    color: #2e2e2e;
+    color: var(--clr-text);
 
-    transition: all 0.2s ease;
+    transition: all var(--transition);
 }
 
 .tab:hover {
     transform: translateY(-2px);
 }
 
-.dashboard { background: #f3d36b; }
-.users { background: #f7a6c6; }
-.exercises { background: #b7c9e6; }
-.permisos { background: #9dbb7c; }
+.tab.active {
+    outline: 2.5px solid rgba(0,0,0,0.22);
+    outline-offset: 1px;
+    font-weight: 800;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.tab .icon {
+    width: 0.85em;
+    height: 0.85em;
+    vertical-align: -0.1em;
+    flex-shrink: 0;
+}
+
+.dashboard { background: var(--clr-tab-dashboard); }
+.users     { background: var(--clr-tab-users);      }
+.exercises { background: var(--clr-tab-exercises);  }
+.permisos  { background: var(--clr-tab-green);      }
 
 
 .user-box {
@@ -51,7 +65,7 @@
     gap: 10px;
 
     font-weight: 600;
-    color: #2e2e2e;
+    color: var(--clr-text);
 }
 
 .avatar {
@@ -63,12 +77,109 @@
     justify-content: center;
 
     border-radius: 50%;
-    background: white;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background: var(--clr-surface);
+    box-shadow: var(--shadow-sm);
 }
 
 .avatar-img {
     width: 28px;
     height: 28px;
     object-fit: cover;
+}
+
+/* =========================
+   DARK MODE TOGGLE
+========================= */
+.theme-toggle {
+    background: none;
+    border: 1.5px solid var(--clr-border);
+    border-radius: var(--radius-pill);
+    padding: 5px 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: var(--clr-text-muted);
+    transition: all var(--transition);
+    line-height: 1;
+}
+
+.theme-toggle:hover {
+    color: var(--clr-text);
+    border-color: var(--clr-text-muted);
+    background: var(--clr-surface-alt);
+    transform: none;
+}
+
+/* Show moon in light mode, sun in dark mode */
+.theme-icon--sun  { display: none; }
+.theme-icon--moon { display: inline; }
+
+[data-theme="dark"] .theme-icon--sun  { display: inline; }
+[data-theme="dark"] .theme-icon--moon { display: none; }
+
+/* =========================
+   DARK MODE TOPBAR
+========================= */
+[data-theme="dark"] .topbar {
+    background: rgba(30, 28, 46, 0.88);
+    border-bottom: 1px solid var(--clr-border);
+}
+
+/* Mute the pastel tab backgrounds in dark mode */
+[data-theme="dark"] .dashboard { background: rgba(243, 211, 107, 0.18); }
+[data-theme="dark"] .users     { background: rgba(247, 166, 198, 0.15); }
+[data-theme="dark"] .exercises { background: rgba(183, 201, 230, 0.15); }
+[data-theme="dark"] .permisos  { background: rgba(157, 187, 124, 0.18); }
+
+[data-theme="dark"] .tab {
+    color: var(--clr-text);
+}
+
+[data-theme="dark"] .tab.active {
+    outline-color: rgba(255,255,255,0.25);
+}
+
+/* =========================
+   MOBILE BREAKPOINTS
+========================= */
+@media (max-width: 960px) {
+    .topbar {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 12px;
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    .nav-tabs {
+        overflow-x: auto;
+        padding-bottom: 4px;
+        gap: 6px;
+        /* Hide scrollbar visually */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab {
+        padding: 7px 12px;
+        font-size: 0.78rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .user-box {
+        justify-content: flex-end;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 520px) {
+    .tab .icon {
+        width: 1em;
+        height: 1em;
+    }
 }

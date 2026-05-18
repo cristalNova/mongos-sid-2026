@@ -2,7 +2,8 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Rutina</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${routine.id == null ? 'Nueva rutina' : 'Editar rutina'}">Rutina</title>
     <link rel="stylesheet" th:href="@{/css/user-detail.css}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
 </head>
@@ -12,29 +13,55 @@
 
     <header class="topbar">
         <h1 th:text="${routine.id == null ? 'Nueva rutina' : 'Editar rutina'}">Rutina</h1>
-        <a th:href="@{/routine/mine}" class="btn-small">Volver</a>
+        <a th:href="@{/routine/mine}" class="btn-small">← Volver</a>
     </header>
 
     <main>
-        <section class="card">
+        <section class="card card--form">
 
             <form th:action="@{__${routine.id == null ? '/routine/create' : '/routine/update/' + routine.id}__}"
                   method="post" class="form">
 
-                <label>Nombre de la rutina</label>
-                <input type="text" name="routineName" th:value="${routine.routineName}" required>
+                <div class="field">
+                    <input type="text" id="routineName" name="routineName"
+                           placeholder=" " th:value="${routine.routineName}" required>
+                    <label for="routineName">Nombre de la rutina *</label>
+                </div>
 
-                <label>Tipo (ej: fuerza, cardio, mixto)</label>
-                <input type="text" name="type" th:value="${routine.type}">
+                <div class="field">
+                    <input type="text" id="type" name="type"
+                           placeholder=" " th:value="${routine.type}"
+                           list="routine-types" autocomplete="off">
+                    <label for="type">Tipo</label>
+                </div>
+                <datalist id="routine-types">
+                    <option value="Fuerza"/>
+                    <option value="Cardio"/>
+                    <option value="Mixto"/>
+                    <option value="HIIT"/>
+                    <option value="Movilidad"/>
+                    <option value="Resistencia"/>
+                </datalist>
 
-                <label>Nivel de dificultad (ej: FÁCIL, MEDIO, DIFÍCIL)</label>
-                <input type="text" name="difficultyType" th:value="${routine.difficultyType}">
+                <div class="field">
+                    <input type="text" id="difficultyType" name="difficultyType"
+                           placeholder=" " th:value="${routine.difficultyType}"
+                           list="difficulty-levels" autocomplete="off">
+                    <label for="difficultyType">Nivel de dificultad</label>
+                </div>
+                <datalist id="difficulty-levels">
+                    <option value="FÁCIL"/>
+                    <option value="MEDIO"/>
+                    <option value="DIFÍCIL"/>
+                </datalist>
 
-                <label>Visibilidad</label>
-                <select name="visibility">
-                    <option value="true"  th:selected="${routine.visibility == true}">Pública</option>
-                    <option value="false" th:selected="${routine.visibility == false}">Privada</option>
-                </select>
+                <div class="field--select field">
+                    <label for="visibility">Visibilidad</label>
+                    <select id="visibility" name="visibility">
+                        <option value="true"  th:selected="${routine.visibility == true}">Pública</option>
+                        <option value="false" th:selected="${routine.visibility == false}">Privada</option>
+                    </select>
+                </div>
 
                 <button type="submit" class="btn"
                         th:text="${routine.id == null ? 'Crear rutina' : 'Actualizar rutina'}">Guardar</button>

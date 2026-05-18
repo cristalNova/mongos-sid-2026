@@ -9,13 +9,6 @@
     <link rel="stylesheet" th:href="@{/css/user-list.css}">
     <link rel="stylesheet" th:href="@{/css/topbar.css}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
-    <style>
-        .role-perms { display:flex; flex-wrap:wrap; gap:0.4rem; align-items:center; }
-        .chip-remove { background:none; border:none; color:#721c24; font-weight:bold;
-                       cursor:pointer; padding:0 0.3rem; font-size:0.85rem; line-height:1; }
-        .assign-form { display:flex; gap:0.4rem; align-items:center; }
-        .assign-form select { padding:0.25rem 0.5rem; border-radius:4px; border:1px solid #ccc; }
-    </style>
 </head>
 <body>
 
@@ -27,13 +20,12 @@
         <div class="user-list">
 
             <!-- CABECERA + CREAR ROL -->
-            <div style="padding:1rem 0; display:flex; justify-content:space-between; align-items:center; gap:1rem;">
-                <h2 style="margin:0;">Roles</h2>
+            <div class="list-header">
+                <h2>Roles</h2>
                 <form sec:authorize="hasAuthority('MANAGE_ROLES')"
                       th:action="@{/role/create}" method="post"
-                      style="display:flex; gap:0.5rem; align-items:center;">
-                    <input type="text" name="name" placeholder="Nombre del nuevo rol" required
-                           style="padding:0.35rem 0.6rem; border-radius:4px; border:1px solid #ccc;">
+                      class="inline-form">
+                    <input type="text" name="name" placeholder="Nombre del nuevo rol" required>
                     <button class="btn-small">+ Crear</button>
                 </form>
             </div>
@@ -46,24 +38,23 @@
                     <small th:text="'ID ' + ${role.id}"></small>
 
                     <!-- PERMISOS ASIGNADOS -->
-                    <div class="role-perms" style="margin-top:0.4rem;">
-                        <span th:each="p : ${role.permissions}" class="chip"
-                              style="display:inline-flex; align-items:center; gap:0.2rem; background:#e9ecef; color:#333; padding:0.2rem 0.5rem; border-radius:12px; font-size:0.8rem;">
+                    <div class="role-perms">
+                        <span th:each="p : ${role.permissions}" class="chip chip--muted">
                             <span th:text="${p.name}"></span>
                             <form sec:authorize="hasAuthority('MANAGE_ROLES')"
                                   th:action="@{/role/remove-permission}" method="post"
-                                  style="margin:0; display:inline;">
+                                  class="form-inline">
                                 <input type="hidden" name="roleId" th:value="${role.id}">
                                 <input type="hidden" name="permissionId" th:value="${p.id}">
-                                <button type="submit" class="chip-remove"
-                                        onclick="return confirm('¿Quitar permiso?')">×</button>
+                                <button type="button" class="chip-remove"
+                                        data-confirm="¿Quitar este permiso del rol?">×</button>
                             </form>
                         </span>
-                        <small th:if="${#lists.isEmpty(role.permissions)}" style="color:#aaa;">Sin permisos</small>
+                        <small th:if="${#lists.isEmpty(role.permissions)}" class="text-muted">Sin permisos</small>
                     </div>
                 </div>
 
-                <div class="actions" style="flex-direction:column; align-items:flex-end; gap:0.5rem;">
+                <div class="actions actions--col">
 
                     <!-- AGREGAR PERMISO -->
                     <form sec:authorize="hasAuthority('MANAGE_ROLES')"
@@ -81,17 +72,16 @@
                     <!-- EDITAR NOMBRE -->
                     <form sec:authorize="hasAuthority('MANAGE_ROLES')"
                           th:action="@{/role/update/{id}(id=${role.id})}" method="post"
-                          style="display:flex; gap:0.4rem; align-items:center;">
-                        <input type="text" name="name" th:value="${role.name}" required
-                               style="padding:0.25rem 0.5rem; border-radius:4px; border:1px solid #ccc;">
+                          class="inline-form">
+                        <input type="text" name="name" th:value="${role.name}" required>
                         <button class="btn-small">Renombrar</button>
                     </form>
 
                     <!-- ELIMINAR -->
                     <form sec:authorize="hasAuthority('MANAGE_ROLES')"
                           th:action="@{'/role/delete/' + ${role.id}}" method="post">
-                        <button class="danger"
-                                onclick="return confirm('¿Eliminar este rol? Esta acción no se puede deshacer.')">
+                        <button type="button" class="danger"
+                                data-confirm="¿Eliminar este rol? Esta acción no se puede deshacer.">
                             Eliminar
                         </button>
                     </form>
@@ -100,9 +90,9 @@
 
             </div>
 
-            <p th:if="${#lists.isEmpty(roles)}" style="color:#888; padding:1rem;">
-                No hay roles registrados.
-            </p>
+            <div th:if="${#lists.isEmpty(roles)}"
+                 th:replace="fragments/empty-state :: empty('No hay roles registrados.', null)">
+            </div>
 
         </div>
     </main>

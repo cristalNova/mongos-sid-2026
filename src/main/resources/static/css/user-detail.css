@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
+@import './app-vars.css';
 
 /* =========================
    BASE
@@ -10,8 +10,8 @@
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
-    background: #BACDED;
+    font-family: var(--font);
+    background: var(--clr-blue-lt);
     min-height: 100vh;
 }
 
@@ -30,9 +30,9 @@ body {
     justify-content: space-between;
     align-items: center;
 
-    background: white;
+    background: var(--clr-surface);
     padding: 16px 20px;
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
 
     margin-bottom: 20px;
 }
@@ -44,14 +44,15 @@ body {
 
 /* BACK BUTTON */
 .btn-small {
-    background: #F3C1D9;
+    background: var(--clr-pink);
     padding: 6px 12px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     text-decoration: none;
     color: black;
     font-size: 12px;
     font-weight: 600;
-    transition: 0.2s;
+    transition: var(--transition);
+    display: inline-block;
 }
 
 .btn-small:hover {
@@ -62,19 +63,19 @@ body {
    CARD CENTRAL
 ========================= */
 .card {
-    background: white;
+    background: var(--clr-surface);
     max-width: 500px;
     margin: auto;
 
     padding: 24px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
 
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* TITLE USER */
+/* TITLE */
 .card h2 {
     font-size: 18px;
     font-weight: 800;
@@ -94,14 +95,13 @@ body {
     justify-content: space-between;
     align-items: center;
 
-    background: #FAF4E4;
+    background: var(--clr-surface-alt);
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: var(--radius-sm);
 
     margin-bottom: 8px;
 }
 
-/* ROLE NAME */
 .card span {
     font-size: 13px;
     font-weight: 600;
@@ -113,16 +113,41 @@ body {
 form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 18px;
+}
+
+/* Floating-label forms need extra top padding on inputs so label has room */
+.form .field > input,
+.form .field > textarea {
+    padding-top: 18px;
+    padding-bottom: 10px;
 }
 
 select,
 input {
     padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--clr-border);
     outline: none;
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--font);
+}
+
+select:focus,
+input:focus {
+    border-color: var(--clr-primary);
+}
+
+textarea {
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--clr-border);
+    outline: none;
+    font-family: var(--font);
+    resize: vertical;
+}
+
+textarea:focus {
+    border-color: var(--clr-primary);
 }
 
 /* =========================
@@ -132,28 +157,305 @@ button {
     border: none;
     cursor: pointer;
     padding: 10px 14px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
-    transition: 0.2s;
+    font-family: var(--font);
+    transition: var(--transition);
 }
 
 /* primary */
-button {
-    background: #9EB16F;
+.btn {
+    background: var(--clr-primary);
+    color: black;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
 }
 
-button:hover {
+button:hover, .btn:hover {
     transform: scale(1.05);
 }
 
 /* danger */
 .danger {
-    background: #ff6b6b;
-    color: white;
+    background: var(--clr-danger);
+    color: var(--clr-surface);
     padding: 6px 10px;
     font-size: 12px;
-    border-radius: 10px;
+    border-radius: var(--radius-sm);
+}
+
+/* =========================
+   BREADCRUMB
+========================= */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--clr-text-muted);
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.breadcrumb a {
+    color: var(--clr-text-muted);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.breadcrumb a:hover {
+    color: var(--clr-text);
+}
+
+.breadcrumb .separator {
+    opacity: 0.5;
+}
+
+.breadcrumb .current {
+    color: var(--clr-text);
+    font-weight: 600;
+}
+
+/* =========================
+   DATA TABLE
+========================= */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    text-align: left;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--clr-border);
+    font-size: 0.85rem;
+    color: var(--clr-text-muted);
+}
+
+.data-table td {
+    padding: 0.5rem;
+}
+
+.data-table td.empty-cell {
+    color: var(--clr-text-muted);
+    padding: 1rem;
+}
+
+.data-table-divider {
+    margin: 1.5rem 0;
+    border: none;
+    border-top: 1px solid var(--clr-border);
+}
+
+/* =========================
+   TRAINER / ASSIGNEE LIST
+========================= */
+.section-block {
+    margin-bottom: 1.5rem;
+}
+
+.list-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--clr-border);
+}
+
+.text-muted {
+    color: var(--clr-text-muted);
+}
+
+.form-zero {
+    margin: 0;
+}
+
+.btn-xs {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: var(--transition);
+}
+
+.btn-xs:hover {
+    transform: scale(1.05);
+}
+
+.btn-xs.danger {
+    background: var(--clr-danger);
+    color: var(--clr-surface);
+}
+
+/* =========================
+   FLOATING LABEL FIELDS
+========================= */
+.field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Push input/textarea width to fill field */
+.field > input,
+.field > textarea {
+    width: 100%;
+}
+
+/* The floating label sits inside the field, on top of the input */
+.field > label {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 12px;
+    font-size: 0.9rem;
+    color: var(--clr-text-muted);
+    pointer-events: none;
+    transition: all 0.18s ease;
+    background: var(--clr-surface);
+    padding: 0 4px;
+    line-height: 1;
+    z-index: 1;
+    white-space: nowrap;
+}
+
+/* Textarea: label anchors to top instead of vertically centered */
+.field--textarea > label {
+    top: 14px;
+    transform: none;
+}
+
+/* Float up: input has value */
+.field > input:not(:placeholder-shown) + label,
+.field > textarea:not(:placeholder-shown) + label {
+    top: -0.55rem;
+    transform: none;
+    font-size: 0.72rem;
+    color: var(--clr-primary);
+    font-weight: 600;
+}
+
+/* Float up: focused */
+.field > input:focus + label,
+.field > textarea:focus + label {
+    top: -0.55rem;
+    transform: none;
+    font-size: 0.72rem;
+    color: var(--clr-primary);
+    font-weight: 600;
+}
+
+/* Date/number: always float the label when there's a valid value */
+.field > input[type="date"]:valid + label,
+.field > input[type="number"]:valid:not(:placeholder-shown) + label {
+    top: -0.55rem;
+    transform: none;
+    font-size: 0.72rem;
+    color: var(--clr-text-muted);
+    font-weight: 600;
+}
+
+/* Focus ring on the field's input/textarea */
+.field:focus-within > input,
+.field:focus-within > textarea {
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 3px rgba(106, 77, 166, 0.1);
+    outline: none;
+}
+
+/* Select fields: static label above */
+.field--select > label {
+    position: static;
+    transform: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--clr-text-muted);
+    margin-bottom: 4px;
+}
+
+.field--select > select {
+    width: 100%;
+}
+
+/* Character counter */
+.char-counter {
+    text-align: right;
+    font-size: 0.72rem;
+    color: var(--clr-text-muted);
+    margin-top: 3px;
+    line-height: 1;
+}
+
+.char-counter.near-limit {
+    color: var(--clr-danger);
+    font-weight: 600;
+}
+
+/* Form section heading (groups of fields) */
+.form-section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--clr-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--clr-border);
+    margin-top: var(--space-sm);
+}
+
+/* Wider card for forms */
+.card--form {
+    max-width: 680px;
+}
+
+/* =========================
+   DARK MODE — form pages
+========================= */
+[data-theme="dark"] body {
+    background: var(--clr-blue-lt);
+    color: var(--clr-text);
+}
+
+[data-theme="dark"] .topbar {
+    background: var(--clr-surface);
+    border-bottom: 1px solid var(--clr-border);
+}
+
+[data-theme="dark"] .card {
+    background: var(--clr-surface);
+    color: var(--clr-text);
+}
+
+[data-theme="dark"] select,
+[data-theme="dark"] input,
+[data-theme="dark"] textarea {
+    background: var(--clr-surface-alt);
+    color: var(--clr-text);
+    border-color: var(--clr-border);
+}
+
+[data-theme="dark"] .field > label {
+    background: var(--clr-surface);
+    color: var(--clr-text-muted);
+}
+
+[data-theme="dark"] .field:focus-within > label,
+[data-theme="dark"] .field > input:not(:placeholder-shown) + label,
+[data-theme="dark"] .field > textarea:not(:placeholder-shown) + label {
+    color: var(--clr-primary);
+}
+
+[data-theme="dark"] .data-table th,
+[data-theme="dark"] .data-table td {
+    border-color: var(--clr-border);
+    color: var(--clr-text);
 }
 
 /* =========================

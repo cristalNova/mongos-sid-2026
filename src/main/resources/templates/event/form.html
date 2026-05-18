@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evento</title>
+    <title th:text="${event.id == null ? 'Nuevo evento' : 'Editar evento'}">Evento</title>
     <link rel="stylesheet" th:href="@{/css/user-detail.css}">
     <link rel="icon" type="image/png" th:href="@{/img/favicon.png}">
 </head>
@@ -13,40 +13,58 @@
 
     <header class="topbar">
         <h1 th:text="${event.id == null ? 'Nuevo evento' : 'Editar evento'}">Evento</h1>
-        <a th:href="@{/event/list}" class="btn-small">Volver</a>
+        <a th:href="@{/event/list}" class="btn-small">← Volver</a>
     </header>
 
     <main>
-        <section class="card">
+        <section class="card card--form">
 
             <form th:action="@{__${event.id == null ? '/event/create' : '/event/update/' + event.id}__}"
                   method="post" class="form">
 
-                <label>Nombre del evento</label>
-                <input type="text" name="name"
-                       th:value="${event.name}" required>
+                <div class="field">
+                    <input type="text" id="name" name="name"
+                           placeholder=" " th:value="${event.name}" required>
+                    <label for="name">Nombre del evento *</label>
+                </div>
 
-                <label>Descripción</label>
-                <textarea name="description" rows="3"
-                          th:text="${event.description}"></textarea>
+                <div class="field field--textarea">
+                    <textarea id="description" name="description" rows="3"
+                              placeholder=" " maxlength="600" data-counter
+                              th:text="${event.description}"></textarea>
+                    <label for="description">Descripción</label>
+                    <span class="char-counter"></span>
+                </div>
 
-                <label>Fecha</label>
-                <input type="date" name="date"
-                       th:value="${event.date != null ? #dates.format(event.date, 'yyyy-MM-dd') : ''}">
+                <div class="field">
+                    <input type="date" id="date" name="date"
+                           placeholder=" "
+                           th:value="${event.date != null ? #dates.format(event.date, 'yyyy-MM-dd') : ''}">
+                    <label for="date">Fecha</label>
+                </div>
 
-                <h3 style="margin-top:1.5rem;">Espacio físico</h3>
+                <p class="form-section-title">Espacio físico</p>
 
-                <label>Nombre del espacio</label>
-                <input type="text" name="physicalSpace.name"
-                       th:value="${event.physicalSpace != null ? event.physicalSpace.name : ''}">
+                <div class="field">
+                    <input type="text" id="spaceName" name="physicalSpace.name"
+                           placeholder=" "
+                           th:value="${event.physicalSpace != null ? event.physicalSpace.name : ''}">
+                    <label for="spaceName">Nombre del espacio</label>
+                </div>
 
-                <label>Ubicación</label>
-                <input type="text" name="physicalSpace.location"
-                       th:value="${event.physicalSpace != null ? event.physicalSpace.location : ''}">
+                <div class="field">
+                    <input type="text" id="spaceLocation" name="physicalSpace.location"
+                           placeholder=" "
+                           th:value="${event.physicalSpace != null ? event.physicalSpace.location : ''}">
+                    <label for="spaceLocation">Ubicación</label>
+                </div>
 
-                <label>Capacidad</label>
-                <input type="number" name="physicalSpace.capacity"
-                       th:value="${event.physicalSpace != null ? event.physicalSpace.capacity : ''}">
+                <div class="field">
+                    <input type="number" id="spaceCapacity" name="physicalSpace.capacity"
+                           placeholder=" "
+                           th:value="${event.physicalSpace != null ? event.physicalSpace.capacity : ''}">
+                    <label for="spaceCapacity">Capacidad</label>
+                </div>
 
                 <button type="submit" class="btn"
                         th:text="${event.id == null ? 'Crear evento' : 'Actualizar evento'}">Guardar</button>
@@ -56,6 +74,24 @@
     </main>
 
 </div>
+
+<script>
+(function () {
+    document.querySelectorAll('textarea[data-counter]').forEach(function (ta) {
+        var wrapper = ta.closest('.field--textarea');
+        var counter = wrapper ? wrapper.querySelector('.char-counter') : null;
+        if (!counter) return;
+        var max = ta.maxLength > 0 ? ta.maxLength : 500;
+        function update() {
+            var len = ta.value.length;
+            counter.textContent = len + ' / ' + max;
+            counter.classList.toggle('near-limit', len >= max * 0.9);
+        }
+        ta.addEventListener('input', update);
+        update();
+    });
+})();
+</script>
 
 </body>
 </html>

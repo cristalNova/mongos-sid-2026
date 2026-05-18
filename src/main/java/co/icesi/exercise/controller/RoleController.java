@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/role")
@@ -33,43 +34,48 @@ public class RoleController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAuthority('MANAGE_ROLES')")
-    public String createRole(@ModelAttribute("roleForm") RoleDTO dto) {
+    public String createRole(@ModelAttribute("roleForm") RoleDTO dto, RedirectAttributes ra) {
         Role role = new Role();
         role.setName(dto.getName());
         roleService.createRole(role, dto.getPermissionIds());
+        ra.addFlashAttribute("flashSuccess", "Rol creado correctamente.");
         return "redirect:/role/view";
     }
 
     @PostMapping("/update/{id}")
     @PreAuthorize("hasAuthority('MANAGE_ROLES')")
     public String updateRole(@PathVariable int id,
-                             @ModelAttribute RoleDTO dto) {
+                             @ModelAttribute RoleDTO dto, RedirectAttributes ra) {
         Role role = new Role();
         role.setName(dto.getName());
         roleService.updateRole(id, role, dto.getPermissionIds());
+        ra.addFlashAttribute("flashSuccess", "Rol actualizado correctamente.");
         return "redirect:/role/view";
     }
 
     @PostMapping("/assign-permission")
     @PreAuthorize("hasAuthority('MANAGE_ROLES')")
     public String assignPermission(@RequestParam int roleId,
-                                   @RequestParam int permissionId) {
+                                   @RequestParam int permissionId, RedirectAttributes ra) {
         roleService.assignPermissionToRole(roleId, permissionId);
+        ra.addFlashAttribute("flashSuccess", "Permiso asignado al rol.");
         return "redirect:/role/view";
     }
 
     @PostMapping("/remove-permission")
     @PreAuthorize("hasAuthority('MANAGE_ROLES')")
     public String removePermission(@RequestParam int roleId,
-                                   @RequestParam int permissionId) {
+                                   @RequestParam int permissionId, RedirectAttributes ra) {
         roleService.removePermissionFromRole(roleId, permissionId);
+        ra.addFlashAttribute("flashSuccess", "Permiso removido del rol.");
         return "redirect:/role/view";
     }
 
     @PostMapping("/delete/{id}")
     @PreAuthorize("hasAuthority('MANAGE_ROLES')")
-    public String deleteRole(@PathVariable int id) {
+    public String deleteRole(@PathVariable int id, RedirectAttributes ra) {
         roleService.deleteRole(id);
+        ra.addFlashAttribute("flashSuccess", "Rol eliminado.");
         return "redirect:/role/view";
     }
 }

@@ -2,48 +2,244 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-
 <body>
 
-<header class="topbar" th:fragment="topbar(userName)">
+<!--
+  Fragment principal de navegación.
+  Uso: <div th:replace="fragments/topbar :: topbar(${userName})"></div>
+  Incluye: sprite de iconos SVG + barra de nav + mensajes flash.
+-->
+<div th:fragment="topbar(userName)">
 
-    <nav class="nav-tabs">
-        <a th:href="@{/user}" class="tab dashboard">Dashboard</a>
+    <!-- ================================================
+         SPRITE SVG — invisible, permite usar <use href="#icon-*">
+         en cualquier parte de la página.
+    ================================================ -->
+    <svg style="display:none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 9 12 2 21 9 21 22 3 22 3 9"/><rect x="9" y="14" width="6" height="8"/>
+            </symbol>
+            <symbol id="icon-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </symbol>
+            <symbol id="icon-dumbbell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="6.5" y1="12" x2="17.5" y2="12"/>
+                <rect x="3" y="9" width="3.5" height="6" rx="1"/><rect x="17.5" y="9" width="3.5" height="6" rx="1"/>
+            </symbol>
+            <symbol id="icon-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+                <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+            </symbol>
+            <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+            </symbol>
+            <symbol id="icon-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/><line x1="3" y1="20" x2="21" y2="20"/>
+            </symbol>
+            <symbol id="icon-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </symbol>
+            <symbol id="icon-graduation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </symbol>
+            <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </symbol>
+            <symbol id="icon-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+            </symbol>
+            <symbol id="icon-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </symbol>
+            <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+            </symbol>
+            <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </symbol>
+            <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </symbol>
+            <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </symbol>
+        </defs>
+    </svg>
 
-        <a sec:authorize="hasAuthority('VIEW_USERS')"
-           th:href="@{/user/list}" class="tab users">Usuarios</a>
+    <!-- ================================================
+         TOPBAR
+    ================================================ -->
+    <header class="topbar">
 
-        <a th:href="@{/exercise/list}" class="tab exercises">Ejercicios</a>
+        <nav class="nav-tabs">
 
-        <a th:href="@{/routine/list}" class="tab">Rutinas</a>
+            <a th:href="@{/user}" class="tab dashboard"
+               th:classappend="${currentPath == '/user' ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-home"/></svg>
+                Dashboard
+            </a>
 
-        <a th:href="@{/event/list}" class="tab">Eventos</a>
+            <a sec:authorize="hasAuthority('VIEW_USERS')"
+               th:href="@{/user/list}" class="tab users"
+               th:classappend="${currentPath != null and currentPath.startsWith('/user/list') ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-users"/></svg>
+                Usuarios
+            </a>
 
-        <a th:href="@{/progress/list}" class="tab">Mi progreso</a>
+            <a th:href="@{/exercise/list}" class="tab exercises"
+               th:classappend="${currentPath != null and currentPath.startsWith('/exercise') ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-dumbbell"/></svg>
+                Ejercicios
+            </a>
 
-        <a th:href="@{/progress/stats}" class="tab">Estadísticas</a>
+            <a th:href="@{/routine/list}" class="tab"
+               th:classappend="${currentPath != null and currentPath.startsWith('/routine') ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-list"/></svg>
+                Rutinas
+            </a>
 
-        <a th:href="@{/recommendation/list}" class="tab">Recomendaciones</a>
+            <a th:href="@{/event/list}" class="tab"
+               th:classappend="${currentPath != null and currentPath.startsWith('/event') ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-calendar"/></svg>
+                Eventos
+            </a>
 
-        <a sec:authorize="hasAuthority('VIEW_USERS')"
-           th:href="@{/user/my-students}" class="tab">Mis estudiantes</a>
+            <a th:href="@{/progress/list}" class="tab"
+               th:classappend="${currentPath != null and (currentPath.startsWith('/progress/list') or currentPath.startsWith('/progress/new') or currentPath.startsWith('/progress/edit')) ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-activity"/></svg>
+                Mi progreso
+            </a>
 
-        <a sec:authorize="hasAuthority('MANAGE_ROLES')"
-           th:href="@{/role/view}" class="tab">Roles</a>
+            <a th:href="@{/progress/stats}" class="tab"
+               th:classappend="${currentPath != null and currentPath.startsWith('/progress/stats') ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-chart"/></svg>
+                Estadísticas
+            </a>
 
-        <a sec:authorize="hasAuthority('MANAGE_PERMISSIONS')"
-           th:href="@{/permission/view}" class="tab permisos">Permisos</a>
-    </nav>
+            <a th:href="@{/recommendation/list}" class="tab"
+               th:classappend="${currentPath != null and currentPath.startsWith('/recommendation') ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-star"/></svg>
+                Recomendaciones
+            </a>
 
-    <div class="user-box">
-        <span th:text="${userName}">Nombre</span>
+            <a sec:authorize="hasAuthority('VIEW_USERS')"
+               th:href="@{/user/my-students}" class="tab"
+               th:classappend="${currentPath != null and currentPath.startsWith('/user/my-students') ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-graduation"/></svg>
+                Mis estudiantes
+            </a>
 
-        <div class="avatar">
-            <img th:src="@{/img/Group-45.svg}" alt="user avatar" class="avatar-img">
+            <a sec:authorize="hasAuthority('MANAGE_ROLES')"
+               th:href="@{/role/view}" class="tab"
+               th:classappend="${currentPath != null and currentPath.startsWith('/role') ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-shield"/></svg>
+                Roles
+            </a>
+
+            <a sec:authorize="hasAuthority('MANAGE_PERMISSIONS')"
+               th:href="@{/permission/view}" class="tab permisos"
+               th:classappend="${currentPath != null and currentPath.startsWith('/permission') ? ' active' : ''}">
+                <svg class="icon" aria-hidden="true"><use href="#icon-key"/></svg>
+                Permisos
+            </a>
+
+        </nav>
+
+        <div class="user-box">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar modo oscuro/claro" title="Modo oscuro">
+                <svg class="icon theme-icon--moon" aria-hidden="true"><use href="#icon-moon"/></svg>
+                <svg class="icon theme-icon--sun"  aria-hidden="true"><use href="#icon-sun"/></svg>
+            </button>
+            <span th:text="${userName}">Nombre</span>
+            <div class="avatar">
+                <svg class="icon" style="width:20px;height:20px;" aria-hidden="true"><use href="#icon-users"/></svg>
+            </div>
         </div>
+
+    </header>
+
+    <!-- ================================================
+         FLASH MESSAGES (consumidos desde RedirectAttributes)
+    ================================================ -->
+    <div th:if="${flashSuccess}" class="flash flash--success" role="status" aria-live="polite">
+        <svg class="icon" aria-hidden="true"><use href="#icon-check"/></svg>
+        <span th:text="${flashSuccess}"></span>
+    </div>
+    <div th:if="${flashError}" class="flash flash--error" role="alert" aria-live="assertive">
+        <svg class="icon" aria-hidden="true"><use href="#icon-x"/></svg>
+        <span th:text="${flashError}"></span>
     </div>
 
-</header>
+    <!-- ================================================
+         CONFIRM DIALOG — triggered by data-confirm buttons
+    ================================================ -->
+    <dialog id="confirm-dialog" class="confirm-dialog">
+        <div class="confirm-body">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <p id="confirm-msg">¿Estás seguro de esta acción?</p>
+        </div>
+        <div class="confirm-actions">
+            <form method="dialog">
+                <button type="submit" class="btn-small">Cancelar</button>
+            </form>
+            <button id="confirm-ok" type="button" class="danger">Confirmar</button>
+        </div>
+    </dialog>
+
+    <script>
+    /* Dark mode — runs immediately to avoid flash */
+    (function () {
+        var saved = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            var btn = document.getElementById('theme-toggle');
+            if (!btn) return;
+            btn.addEventListener('click', function () {
+                var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+                localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            });
+        });
+    })();
+    </script>
+
+    <script>
+    (function () {
+        var pendingForm = null;
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-confirm]');
+            if (!btn) return;
+            e.preventDefault();
+            pendingForm = btn.closest('form');
+            var msg = btn.dataset.confirm || '¿Confirmar esta acción?';
+            document.getElementById('confirm-msg').textContent = msg;
+            document.getElementById('confirm-dialog').showModal();
+        });
+        document.getElementById('confirm-ok').addEventListener('click', function () {
+            document.getElementById('confirm-dialog').close();
+            if (pendingForm) { pendingForm.submit(); pendingForm = null; }
+        });
+    })();
+    </script>
+
+</div>
 
 </body>
 </html>
