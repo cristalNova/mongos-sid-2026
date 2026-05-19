@@ -656,6 +656,32 @@ input:focus, select:focus {
     overflow: visible;
 }
 
+.filter-form {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    flex-wrap: wrap;
+
+    margin: 10px 0 20px 0;
+}
+
+.filter-form select {
+    padding: 8px 10px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--clr-border);
+    background: var(--clr-surface);
+    color: var(--clr-text);
+    font-family: var(--font);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+.filter-form select:focus {
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 3px rgba(158,177,111,0.15);
+}
+
 /* =========================
    ATTENDANCE PAGE
 ========================= */

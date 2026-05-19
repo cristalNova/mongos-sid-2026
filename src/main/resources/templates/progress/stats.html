@@ -21,9 +21,61 @@
         <div class="list-header">
             <h2>Estadísticas de rendimiento</h2>
             <div class="list-actions">
-                <a th:href="@{/progress/export/pdf}" class="btn-small btn-small--danger">Descargar PDF</a>
+                <a th:href="@{/progress/export/pdf(period=${period}, routine=${selectedRoutine}, exercise=${selectedExercise})}" class="btn-small btn-small--danger">
+                    Descargar PDF
+                </a>
+
+                <a th:href="@{/progress/export/csv(period=${period}, routine=${selectedRoutine}, exercise=${selectedExercise})}" class="btn-small btn-small--danger">
+                    Exportar CSV
+                </a>
                 <a th:href="@{/progress/list}" class="btn-small">Ver historial</a>
             </div>
+
+            <div class="list-filters">
+                <a th:href="@{/progress/stats(period='all')}"
+                   class="btn-small"
+                   th:classappend="${period == 'all'} ? ' btn-small--active'">
+                    Todo
+                </a>
+
+                <a th:href="@{/progress/stats(period='week')}"
+                   class="btn-small"
+                   th:classappend="${period == 'week'} ? ' btn-small--active'">
+                    Última semana
+                </a>
+
+                <a th:href="@{/progress/stats(period='month')}"
+                   class="btn-small"
+                   th:classappend="${period == 'month'} ? ' btn-small--active'">
+                    Último mes
+                </a>
+            </div>
+
+            <form method="get" th:action="@{/progress/stats}" class="filter-form">
+
+                <input type="hidden" name="period" th:value="${period}"/>
+
+                <select name="routine">
+                    <option value="">Todas las rutinas</option>
+                    <option th:each="r : ${routines}"
+                            th:value="${r}"
+                            th:text="${r}"
+                            th:selected="${r == selectedRoutine}">
+                    </option>
+                </select>
+
+                <select name="exercise">
+                    <option value="">Todos los ejercicios</option>
+                    <option th:each="e : ${exercises}"
+                            th:value="${e}"
+                            th:text="${e}"
+                            th:selected="${e == selectedExercise}">
+                    </option>
+                </select>
+
+                <button type="submit" class="btn-small">Filtrar</button>
+
+            </form>
         </div>
 
         <!-- Summary boxes -->

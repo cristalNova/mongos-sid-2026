@@ -21,12 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.awt.Color;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -122,111 +120,163 @@ public class ProgressRecordController {
         return "progress/student-list";
     }
 
-    /** REQ 11 — performance statistics with charts */
+    private List<ProgressRecordDocument> filterRecords(
+            List<ProgressRecordDocument> allRecords,
+            String period,
+            String routine,
+            String exercise
+    ) {
+
+        Date now = new Date();
+
+        long filterTime = switch (period) {
+            case "week" -> now.getTime() - (7L * 24 * 60 * 60 * 1000);
+            case "month" -> now.getTime() - (30L * 24 * 60 * 60 * 1000);
+            default -> 0;
+        };
+
+        return allRecords.stream()
+                .filter(r -> period.equals("all") ||
+                        (r.getDate() != null && r.getDate().getTime() >= filterTime))
+                .filter(r -> routine == null || routine.isEmpty()
+                        || routine.equals(r.getRoutineName()))
+                .filter(r -> exercise == null || exercise.isEmpty()
+                        || exercise.equals(r.getExerciseName()))
+                .sorted(Comparator.comparing(r ->
+                        r.getDate() != null ? r.getDate().getTime() : 0L))
+                .toList();
+    }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/stats")
-    public String stats(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+    public String stats(
+            @RequestParam(defaultValue = "all") String period,
+            @RequestParam(required = false) String routine,
+            @RequestParam(required = false) String exercise,
+            Model model,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
         int userId = userService.getUserByEmail(userDetails.getUsername()).getId();
-        List<ProgressRecordDocument> records = progressRecordService.getProgressRecordsByUserId(userId);
-        records.sort(Comparator.comparing(r -> (r.getDate() != null ? r.getDate().getTime() : 0L)));
+
+        List<ProgressRecordDocument> allRecords =
+                progressRecordService.getProgressRecordsByUserId(userId);
+
+        List<ProgressRecordDocument> records =
+                filterRecords(allRecords, period, routine, exercise);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
-        StringBuilder labels = new StringBuilder("[");
-        StringBuilder repsData = new StringBuilder("[");
-        StringBuilder weightData = new StringBuilder("[");
 
-        for (int i = 0; i < records.size(); i++) {
-            ProgressRecordDocument r = records.get(i);
-            if (i > 0) { labels.append(","); repsData.append(","); weightData.append(","); }
-            String dateStr = r.getDate() != null ? sdf.format(r.getDate()) : "?";
-            labels.append("\"").append(dateStr).append("\"");
-            repsData.append(r.getRepetitions() != null ? r.getRepetitions() : 0);
-            weightData.append(r.getWeight() != null ? r.getWeight() : 0);
+        List<String> labels = new ArrayList<>();
+        List<Integer> repsData = new ArrayList<>();
+        List<Double> weightData = new ArrayList<>();
+        List<Integer> seriesData = new ArrayList<>();
+
+        for (ProgressRecordDocument r : records) {
+            labels.add(r.getDate() != null ? sdf.format(r.getDate()) : "?");
+            repsData.add(r.getRepetitions() != null ? r.getRepetitions() : 0);
+            weightData.add(r.getWeight() != null ? r.getWeight() : 0);
+            seriesData.add(r.getSeries() != null ? r.getSeries() : 0);
         }
-        labels.append("]");
-        repsData.append("]");
-        weightData.append("]");
 
-        // Series data JSON
-        StringBuilder seriesData = new StringBuilder("[");
-        for (int i = 0; i < records.size(); i++) {
-            if (i > 0) seriesData.append(",");
-            seriesData.append(records.get(i).getSeries() != null ? records.get(i).getSeries() : 0);
-        }
-        seriesData.append("]");
-
-        // Averages
         double avgReps = records.stream()
                 .filter(r -> r.getRepetitions() != null)
                 .mapToInt(ProgressRecordDocument::getRepetitions)
                 .average().orElse(0);
+
         double avgWeight = records.stream()
                 .filter(r -> r.getWeight() != null)
                 .mapToDouble(ProgressRecordDocument::getWeight)
                 .average().orElse(0);
 
-        // Exercise sparklines: group by exerciseName, compute SVG polyline points
+        long totalReps = records.stream()
+                .filter(r -> r.getRepetitions() != null)
+                .mapToLong(ProgressRecordDocument::getRepetitions)
+                .sum();
+
+        long totalSeries = records.stream()
+                .filter(r -> r.getSeries() != null)
+                .mapToLong(ProgressRecordDocument::getSeries)
+                .sum();
+
         Map<String, List<Integer>> sparksMap = records.stream()
                 .filter(r -> r.getExerciseName() != null && r.getRepetitions() != null)
                 .collect(Collectors.groupingBy(
                         ProgressRecordDocument::getExerciseName,
                         LinkedHashMap::new,
-                        Collectors.mapping(ProgressRecordDocument::getRepetitions, Collectors.toList())));
+                        Collectors.mapping(ProgressRecordDocument::getRepetitions, Collectors.toList())
+                ));
 
         List<Map<String, Object>> exerciseSparks = new ArrayList<>();
-        for (Map.Entry<String, List<Integer>> entry : sparksMap.entrySet()) {
+
+        for (var entry : sparksMap.entrySet()) {
+
             List<Integer> vals = entry.getValue();
-            int maxVal = vals.stream().mapToInt(Integer::intValue).max().orElse(1);
-            if (maxVal == 0) maxVal = 1;
-            int n = vals.size();
+            int max = vals.stream().mapToInt(Integer::intValue).max().orElse(1);
+
             StringBuilder pts = new StringBuilder();
-            for (int i = 0; i < n; i++) {
-                double x = n == 1 ? 40.0 : (i * 80.0 / (n - 1));
-                double y = 28.0 - (vals.get(i) * 28.0 / maxVal);
+
+            for (int i = 0; i < vals.size(); i++) {
+
+                double x = vals.size() == 1 ? 40.0 : (i * 80.0 / (vals.size() - 1));
+                double y = 28.0 - (vals.get(i) * 28.0 / max);
+
                 if (i > 0) pts.append(" ");
+
                 pts.append(String.format("%.1f,%.1f", x, y));
             }
+
             double avg = vals.stream().mapToInt(Integer::intValue).average().orElse(0);
+
             Map<String, Object> spark = new LinkedHashMap<>();
+
             spark.put("name", entry.getKey());
             spark.put("points", pts.toString());
-            spark.put("count", n);
+            spark.put("count", vals.size());
             spark.put("avgReps", Math.round(avg));
-            spark.put("maxReps", maxVal);
+            spark.put("maxReps", max);
+
             exerciseSparks.add(spark);
         }
 
-        long totalReps = records.stream()
-                .filter(r -> r.getRepetitions() != null)
-                .mapToLong(ProgressRecordDocument::getRepetitions).sum();
-        long totalSeries = records.stream()
-                .filter(r -> r.getSeries() != null)
-                .mapToLong(ProgressRecordDocument::getSeries).sum();
-
         model.addAttribute("records", records);
-        model.addAttribute("labels", labels.toString());
-        model.addAttribute("repsData", repsData.toString());
-        model.addAttribute("weightData", weightData.toString());
-        model.addAttribute("seriesData", seriesData.toString());
+        model.addAttribute("labels", labels);
+        model.addAttribute("repsData", repsData);
+        model.addAttribute("weightData", weightData);
+        model.addAttribute("seriesData", seriesData);
+
         model.addAttribute("totalRecords", records.size());
         model.addAttribute("totalReps", totalReps);
         model.addAttribute("totalSeries", totalSeries);
+
         model.addAttribute("avgReps", Math.round(avgReps));
         model.addAttribute("avgWeight", String.format("%.1f", avgWeight));
+
         model.addAttribute("exerciseSparks", exerciseSparks);
+
+        model.addAttribute("routines", allRecords.stream().map(ProgressRecordDocument::getRoutineName).filter(Objects::nonNull).distinct().toList());
+        model.addAttribute("exercises", allRecords.stream().map(ProgressRecordDocument::getExerciseName).filter(Objects::nonNull).distinct().toList());
+
+        model.addAttribute("selectedRoutine", routine);
+        model.addAttribute("selectedExercise", exercise);
+
         model.addAttribute("userName", userDetails.getUsername());
+        model.addAttribute("period", period);
+
         return "progress/stats";
     }
-
     /** REQ 14 — export personal progress report as PDF */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/export/pdf")
-    public void exportPdf(HttpServletResponse response,
+    public void exportPdf(@RequestParam(defaultValue = "all") String period,
+                          @RequestParam(required = false) String routine,
+                          @RequestParam(required = false) String exercise,HttpServletResponse response,
                           @AuthenticationPrincipal UserDetails userDetails) throws Exception {
         int userId = userService.getUserByEmail(userDetails.getUsername()).getId();
         AppUser user = userService.getAppUserById(userId);
-        List<ProgressRecordDocument> records = progressRecordService.getProgressRecordsByUserId(userId);
-        records.sort(Comparator.comparing(r -> (r.getDate() != null ? r.getDate().getTime() : 0L)));
+        List<ProgressRecordDocument> allRecords = progressRecordService.getProgressRecordsByUserId(userId);
+
+        List<ProgressRecordDocument> records =
+                filterRecords(allRecords, period, routine, exercise);
 
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=\"reporte-progreso.pdf\"");
@@ -269,5 +319,46 @@ public class ProgressRecordController {
 
         document.add(table);
         document.close();
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/export/csv")
+    public void exportCsv(@RequestParam(defaultValue = "all") String period,
+                          @RequestParam(required = false) String routine,
+                          @RequestParam(required = false) String exercise,HttpServletResponse response,
+                          @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+
+        int userId = userService.getUserByEmail(userDetails.getUsername()).getId();
+        List<ProgressRecordDocument> allRecords = progressRecordService.getProgressRecordsByUserId(userId);
+
+        List<ProgressRecordDocument> records =
+                filterRecords(allRecords, period, routine, exercise);
+
+        records.sort(Comparator.comparing(r -> (r.getDate() != null ? r.getDate().getTime() : 0L)));
+
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"reporte-progreso.csv\"");
+
+        PrintWriter writer = response.getWriter();
+
+        writer.println("Fecha,Ejercicio,Rutina,Series,Reps,Peso (kg),Notas");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        for (ProgressRecordDocument r : records) {
+
+            writer.println(String.join(",",
+                    r.getDate() != null ? sdf.format(r.getDate()) : "",
+                    r.getExerciseName() != null ? r.getExerciseName() : "",
+                    r.getRoutineName() != null ? r.getRoutineName() : "",
+                    String.valueOf(r.getSeries() != null ? r.getSeries() : 0),
+                    String.valueOf(r.getRepetitions() != null ? r.getRepetitions() : 0),
+                    String.valueOf(r.getWeight() != null ? r.getWeight() : 0),
+                    r.getProgressNotes() != null ? r.getProgressNotes().replace(",", " ") : ""
+            ));
+        }
+
+        writer.flush();
+        writer.close();
     }
 }
