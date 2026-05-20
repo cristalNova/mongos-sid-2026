@@ -323,18 +323,25 @@ public class ProgressRecordController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/export/csv")
-    public void exportCsv(@RequestParam(defaultValue = "all") String period,
-                          @RequestParam(required = false) String routine,
-                          @RequestParam(required = false) String exercise,HttpServletResponse response,
+    public void exportCsv(@RequestParam(required = false) String q,HttpServletResponse response,
                           @AuthenticationPrincipal UserDetails userDetails) throws Exception {
 
         int userId = userService.getUserByEmail(userDetails.getUsername()).getId();
-        List<ProgressRecordDocument> allRecords = progressRecordService.getProgressRecordsByUserId(userId);
+        List<ProgressRecordDocument> records = progressRecordService.getProgressRecordsByUserId(userId);
 
-        List<ProgressRecordDocument> records =
-                filterRecords(allRecords, period, routine, exercise);
+        if (q != null && !q.isBlank()) {
+            String lower = q.toLowerCase();
+            records = records.stream()
+                    .filter(r -> (r.getExerciseName() != null && r.getExerciseName().toLowerCase().contains(lower))
+                            || (r.getRoutineName() != null && r.getRoutineName().toLowerCase().contains(lower)))
+                    .toList();
+        }
 
-        records.sort(Comparator.comparing(r -> (r.getDate() != null ? r.getDate().getTime() : 0L)));
+        records = records.stream()
+                .sorted(Comparator.comparing(r ->
+                        r.getDate() != null ? r.getDate().getTime() : 0L))
+                .toList();
+
 
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=\"reporte-progreso.csv\"");

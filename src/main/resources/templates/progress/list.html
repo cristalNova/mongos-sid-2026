@@ -24,6 +24,8 @@
                 <div class="list-actions">
                     <a th:href="@{/progress/stats}" class="btn-small">Estadísticas</a>
                     <a th:href="@{/progress/export/pdf}" class="btn-small btn-small--danger">Exportar PDF</a>
+                    <a th:href="@{/progress/export/csv(q=${q})}" class="btn-small btn-small--danger">
+                        Export CSV</a>
                     <a th:href="@{/progress/new}" class="btn-small">+ Nuevo registro</a>
                 </div>
             </div>
